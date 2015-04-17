@@ -24,6 +24,10 @@
             android:name=".InboxList"
             android:label="@string/title_activity_inbox_list" >
         </activity>
+        <activity
+            android:name=".DrawActivity"
+            android:label="@string/title_activity_draw" >
+        </activity>
     </application>
 
 </manifest>

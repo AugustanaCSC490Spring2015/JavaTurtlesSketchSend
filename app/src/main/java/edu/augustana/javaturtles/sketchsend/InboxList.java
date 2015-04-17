@@ -36,4 +36,6 @@ public class InboxList extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    //Dialog for "Add" button
 }

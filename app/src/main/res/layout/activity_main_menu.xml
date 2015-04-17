@@ -30,4 +30,20 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:text="sKetcH SenD"
+        android:layout_above="@+id/ratingBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="99dp" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ratingBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

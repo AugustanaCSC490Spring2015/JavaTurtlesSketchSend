@@ -14,6 +14,8 @@ public class MainMenu extends ActionBarActivity {
         setContentView(R.layout.activity_main_menu);
     }
 
+    //listeners for sketch,
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
