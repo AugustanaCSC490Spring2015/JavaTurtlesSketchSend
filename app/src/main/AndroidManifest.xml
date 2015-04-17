@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ContactList"
+            android:label="@string/title_activity_contact_list" >
+        </activity>
+        <activity
+            android:name=".InboxList"
+            android:label="@string/title_activity_inbox_list" >
+        </activity>
     </application>
 
 </manifest>
