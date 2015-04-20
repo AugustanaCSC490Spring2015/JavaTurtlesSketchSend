@@ -18,10 +18,12 @@ public class MainMenu extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-   // Initialize Parse.com
-        Parse.enableLocalDatastore(this);
-
-        Parse.initialize(this, "9CyX7Z3iEe1RmHQ5Kq1OOsYgCBjc1o1qL3pfgZJ3", "buzay1iQNk7LpMrVpyfCVCtJodFaaHHfY6RsAFeq");
+       /* try {
+            Parse.enableLocalDatastore(this);
+        } catch (IllegalStateException ex) {
+            ex.printStackTrace();
+        }
+         Parse.initialize(this, "9CyX7Z3iEe1RmHQ5Kq1OOsYgCBjc1o1qL3pfgZJ3", "buzay1iQNk7LpMrVpyfCVCtJodFaaHHfY6RsAFeq"); */
 
         //do something on Parse.com
         ParseObject testObject = new ParseObject("TestObject");
@@ -87,5 +89,11 @@ public class MainMenu extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        finish();
     }
 }
