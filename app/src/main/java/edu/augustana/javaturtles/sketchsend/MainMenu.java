@@ -8,6 +8,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.parse.Parse;
+import com.parse.ParseObject;
+
 
 public class MainMenu extends ActionBarActivity {
 
@@ -25,6 +28,15 @@ public class MainMenu extends ActionBarActivity {
 
         Button contactsButton=(Button) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(contactsButtonHandler);
+    //connect to Parse.com
+        Parse.enableLocalDatastore(this);
+
+        Parse.initialize(this, "9CyX7Z3iEe1RmHQ5Kq1OOsYgCBjc1o1qL3pfgZJ3", "buzay1iQNk7LpMrVpyfCVCtJodFaaHHfY6RsAFeq");
+
+        ParseObject testObject3 = new ParseObject("TestObject 3");
+        testObject3.put("Test Column", "Test Here");
+        testObject3.saveInBackground();
+
     }
 
     //Listener for sketchMenuButton
