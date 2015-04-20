@@ -18,6 +18,15 @@ public class MainMenu extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+   // Initialize Parse.com
+        Parse.enableLocalDatastore(this);
+
+        Parse.initialize(this, "9CyX7Z3iEe1RmHQ5Kq1OOsYgCBjc1o1qL3pfgZJ3", "buzay1iQNk7LpMrVpyfCVCtJodFaaHHfY6RsAFeq");
+
+        //do something on Parse.com
+        ParseObject testObject = new ParseObject("TestObject");
+        testObject.put("foo", "bar");
+        testObject.saveInBackground();
 
         //Creating sketchButton, inboxButton, contactsButton, and attaching listeners
         Button sketchButton=(Button) findViewById(R.id.sketchButton);
@@ -28,14 +37,6 @@ public class MainMenu extends ActionBarActivity {
 
         Button contactsButton=(Button) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(contactsButtonHandler);
-    //connect to Parse.com
-        Parse.enableLocalDatastore(this);
-
-        Parse.initialize(this, "9CyX7Z3iEe1RmHQ5Kq1OOsYgCBjc1o1qL3pfgZJ3", "buzay1iQNk7LpMrVpyfCVCtJodFaaHHfY6RsAFeq");
-
-        ParseObject testObject3 = new ParseObject("TestObject 3");
-        testObject3.put("Test Column", "Test Here");
-        testObject3.saveInBackground();
 
     }
 
