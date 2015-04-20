@@ -1,9 +1,12 @@
 package edu.augustana.javaturtles.sketchsend;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 public class MainMenu extends ActionBarActivity {
@@ -12,10 +15,44 @@ public class MainMenu extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        //Creating sketchButton, inboxButton, contactsButton, and attaching listeners
+        Button sketchButton=(Button) findViewById(R.id.sketchButton);
+        sketchButton.setOnClickListener(sketchMenuButtonHandler);
+
+        Button inboxButton=(Button) findViewById(R.id.inboxButton);
+        inboxButton.setOnClickListener(inboxButtonHandler);
+
+        Button contactsButton=(Button) findViewById(R.id.contactsButton);
+        contactsButton.setOnClickListener(contactsButtonHandler);
     }
 
-    //listeners for sketch,
+    //Listener for sketchMenuButton
+    View.OnClickListener sketchMenuButtonHandler=new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            Intent playGameIntent=new Intent(MainMenu.this, DrawActivity.class);
+            startActivity(playGameIntent);
+        }
+    };
 
+    //Listener for inboxButton
+    View.OnClickListener inboxButtonHandler=new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            Intent playGameIntent=new Intent(MainMenu.this, InboxList.class);
+            startActivity(playGameIntent);
+        }
+    };
+
+    //Listener for contactsButton
+    View.OnClickListener contactsButtonHandler=new View.OnClickListener(){
+        @Override
+        public void onClick(View v) {
+            Intent playGameIntent=new Intent(MainMenu.this, ContactList.class);
+            startActivity(playGameIntent);
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
