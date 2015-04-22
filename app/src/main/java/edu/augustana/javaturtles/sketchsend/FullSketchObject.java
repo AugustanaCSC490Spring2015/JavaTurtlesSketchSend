@@ -6,13 +6,13 @@ import java.util.LinkedList;
  * Created by logankruse11 on 4/21/2015.
  */
 public class FullSketchObject {
-    private LinkedList<SingleLineObject> fullDrawing;
+    private LinkedList<SingleLine> fullDrawing;
 
     public FullSketchObject(){
         fullDrawing=new LinkedList<>();
     }
 
-    public void add(SingleLineObject newLineObject){
+    public void add(SingleLine newLineObject){
         fullDrawing.add(newLineObject);
     }
 
@@ -24,7 +24,7 @@ public class FullSketchObject {
         fullDrawing.clear();
     }
 
-    public LinkedList<SingleLineObject> getFullDrawing(){return fullDrawing;}
+    public LinkedList<SingleLine> getFullDrawing(){return fullDrawing;}
 
     public int getSize(){return fullDrawing.size();}
 }

@@ -10,11 +10,8 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class DrawingView extends View {
@@ -27,7 +24,7 @@ public class DrawingView extends View {
     private Bitmap bitmap;
     private Canvas bitmapCanvas;
 
-    private SingleLineObject newLine;
+    private SingleLine newLine;
     private Point lastDraw;
 
     private FullSketchObject currentDrawing;
@@ -125,7 +122,7 @@ public class DrawingView extends View {
 
     private void startLine(int x,int y){
         lastDraw=new Point(x,y);
-        newLine=new SingleLineObject(Color.BLACK,5,lastDraw);
+        newLine=new SingleLine(Color.BLACK,5,lastDraw);
     }
 
     private void dragLine(int x, int y)
