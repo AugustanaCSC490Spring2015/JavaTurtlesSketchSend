@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 public class DrawFragment extends Fragment {
 
-    private DrawingView drawingView; // gameView
+    private DrawingView drawingView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -20,8 +20,8 @@ public class DrawFragment extends Fragment {
         View view =
                 inflater.inflate(R.layout.fragment_draw, container, false);
 
-        drawingView = (DrawingView) view.findViewById(R.id.mainDrawingView);
-        return view;
+            drawingView = (DrawingView) view.findViewById(R.id.the_drawing_view);
+            return view;
     }
 
     @Override
@@ -35,7 +35,6 @@ public class DrawFragment extends Fragment {
     public void onPause()
     {
         super.onPause();
-        drawingView.stopGame();
     }
 
     // when MainActivity is over, releases game resources

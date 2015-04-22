@@ -8,6 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:name="edu.augustana.javaturtles.sketchsend.DrawFragment"
-        android:id="@+id/mainDrawingView"
+        android:id="@+id/main_drawing_fragment"
         android:layout_gravity="left|top" />
 </FrameLayout>

@@ -2,36 +2,50 @@ package edu.augustana.javaturtles.sketchsend;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
+public class DrawingView extends View {
     private static final String TAG = "SketchSend"; // for Log.w(TAG, ...)
 
-    private GameThread gameThread; // runs the main game loop
+    private Activity drawActivity; // keep a reference to the main Activity
 
-    private Activity playGameActivity; // keep a reference to the main Activity
+
     private Paint backgroundPaint;
+    private Bitmap bitmap;
+    private Canvas bitmapCanvas;
 
-    private boolean isGameOver = true;
+    private SingleLineObject newLine;
+    private Point lastDraw;
+
+    private FullSketchObject currentDrawing;
 
     private int screenWidth;
     private int screenHeight;
 
+    private String lineStyle="Straight";
 
     public DrawingView(Context context, AttributeSet atts) {
         super(context, atts);
-        playGameActivity = (Activity) context;
+        Log.w(TAG, "drawing view created");
+        drawActivity = (Activity) context;
 
-        getHolder().addCallback(this);
+        backgroundPaint=new Paint();
+        backgroundPaint.setColor(Color.WHITE);
+
+        currentDrawing=new FullSketchObject();
     }
 
     // called when the size changes (and first time, when view is created)
@@ -41,32 +55,53 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
 
         screenWidth = w;
         screenHeight = h;
-        startNewGame();
+        bitmap=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
+        bitmapCanvas =new Canvas(bitmap);
+        bitmap.eraseColor(Color.WHITE);
+        invalidate();
     }
 
-    public void startNewGame() {
-        if (isGameOver) {
-            isGameOver = false;
-            gameThread = new GameThread(getHolder());
-            gameThread.start(); // start the main game loop going
+    public void clearCanvas(){
+
+    }
+
+    public void colorSelect(int color){
+    }
+
+    public void setLineStyle(){
+
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas){
+        // drawOnHiddenBitmap the background screen
+        canvas.drawBitmap(bitmap, 0, 0, backgroundPaint);
+    }
+
+    public void drawOnHiddenBitmap(Canvas canvas){
+        Paint tester=new Paint();
+        tester.setColor(newLine.getColor());
+
+        int widthTester=8;
+        LinkedList<Point> thisLine=newLine.getLine();
+        for(int i=0; i<newLine.getSize(); i++) {
+            Point thisPointToDraw = thisLine.poll();
+            canvas.drawCircle(thisPointToDraw.x, thisPointToDraw.y, newLine.getWidth(), tester);
+            Log.w(TAG, i + " dots drawn");
+            Log.w(TAG, newLine.getSize() + " dots in sketch");
+            Log.w(TAG, currentDrawing.getSize() + "Sketches in current drawing");
         }
-    }
-
-
-    private void gameStep() {
-
     }
 
     public void updateView(Canvas canvas) {
         if (canvas != null) {
-            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), backgroundPaint);
+            canvas.drawRect(0, 0, screenWidth, screenHeight, backgroundPaint);
         }
     }
 
     // stop the game; may be called by the MainGameFragment onPause
-    public void stopGame() {
-        if (gameThread != null)
-            gameThread.setRunning(false);
+    public void stopDrawing() {
+
     }
 
     // release resources; may be called by MainGameFragment onDestroy
@@ -74,77 +109,42 @@ public class DrawingView extends SurfaceView implements SurfaceHolder.Callback {
         // release any resources (e.g. SoundPool stuff)
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-    }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    public boolean onTouchEvent(MotionEvent e){
 
-    }
-
-    // called when the surface is destroyed
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        // ensure that thread terminates properly
-        boolean retry = true;
-        gameThread.setRunning(false); // terminate gameThread
-
-        while (retry) {
-            try {
-                gameThread.join(); // wait for gameThread to finish
-                retry = false;
-            } catch (InterruptedException e) {
-                Log.e(TAG, "Thread interrupted", e);
-            }
+        if(e.getAction() == MotionEvent.ACTION_DOWN){
+            startLine((int) e.getX(), (int) e.getY());
+        }else if(e.getAction() == MotionEvent.ACTION_UP){
+            endLine((int)e.getX(),(int) e.getY());
+        }else{
+            dragLine((int) e.getX(), (int) e.getY());
         }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
         return true;
     }
 
-    // Thread subclass to run the main game loop
-    private class GameThread extends Thread {
-        private SurfaceHolder surfaceHolder; // for manipulating canvas
-        private boolean threadIsRunning = true; // running by default
-
-        // initializes the surface holder
-        public GameThread(SurfaceHolder holder) {
-            surfaceHolder = holder;
-            setName("GameThread");
-        }
-
-        // changes running state
-        public void setRunning(boolean running) {
-            threadIsRunning = running;
-        }
-
-        @Override
-        public void run() {
-            Canvas canvas = null;
-
-            while (threadIsRunning) {
-                try {
-                    // get Canvas for exclusive drawing from this thread
-                    canvas = surfaceHolder.lockCanvas(null);
-
-                    // lock the surfaceHolder for drawing
-                    synchronized (surfaceHolder) {
-                        gameStep();         // update game state
-                        updateView(canvas); // draw using the canvas
-                    }
-                    Thread.sleep(5); // if you want to slow down the action...
-                } catch (InterruptedException ex) {
-                    Log.e(TAG, ex.toString());
-                } finally  // regardless if any errors happen...
-                {
-                    // make sure we unlock canvas so other threads can use it
-                    if (canvas != null)
-                        surfaceHolder.unlockCanvasAndPost(canvas);
-                }
-            }
-        }
+    private void startLine(int x,int y){
+        lastDraw=new Point(x,y);
+        newLine=new SingleLineObject(Color.BLACK,5,lastDraw);
     }
+
+    private void dragLine(int x, int y)
+    {
+        if((Math.abs(x-lastDraw.x) + Math.abs(y-lastDraw.y))>=2){
+            lastDraw=new Point(x,y);
+            newLine.add(lastDraw);
+        }
+        drawOnHiddenBitmap(bitmapCanvas);
+        invalidate();
+    }
+
+    private void endLine(int x, int y)
+    {
+        newLine.add(new Point(x,y));
+        currentDrawing.add(newLine);
+        drawOnHiddenBitmap(bitmapCanvas);
+        invalidate();
+
+    }
+
 }
