@@ -11,4 +11,5 @@
         class="edu.augustana.javaturtles.sketchsend.DrawingView"
         android:id="@+id/the_drawing_view"
         android:layout_gravity="center" />
+
 </FrameLayout>

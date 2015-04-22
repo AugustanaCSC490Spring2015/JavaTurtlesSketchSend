@@ -10,4 +10,5 @@
         android:name="edu.augustana.javaturtles.sketchsend.DrawFragment"
         android:id="@+id/main_drawing_fragment"
         android:layout_gravity="left|top" />
+
 </FrameLayout>

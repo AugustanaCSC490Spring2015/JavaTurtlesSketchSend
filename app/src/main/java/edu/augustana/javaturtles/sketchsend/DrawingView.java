@@ -26,9 +26,14 @@ public class DrawingView extends View {
 
     private SingleLine newLine;
     private Point lastDraw;
+    private Point thisDraw;
+    private boolean firstPoint=true;
 
     private FullSketchObject currentDrawing;
 
+    private int colorSelected;
+    private int lineWidth;
+    private int circleRadius;
     private int screenWidth;
     private int screenHeight;
 
@@ -59,10 +64,12 @@ public class DrawingView extends View {
     }
 
     public void clearCanvas(){
-
+        bitmap=Bitmap.createBitmap(screenWidth,screenHeight,Bitmap.Config.ARGB_8888);
+        currentDrawing=new FullSketchObject();
     }
 
     public void colorSelect(int color){
+        colorSelected=color;
     }
 
     public void setLineStyle(){
@@ -78,16 +85,14 @@ public class DrawingView extends View {
     public void drawOnHiddenBitmap(Canvas canvas){
         Paint tester=new Paint();
         tester.setColor(newLine.getColor());
+        int widthTester=10;
+        tester.setStrokeWidth(widthTester);
 
-        int widthTester=8;
         LinkedList<Point> thisLine=newLine.getLine();
-        for(int i=0; i<newLine.getSize(); i++) {
-            Point thisPointToDraw = thisLine.poll();
-            canvas.drawCircle(thisPointToDraw.x, thisPointToDraw.y, newLine.getWidth(), tester);
-            Log.w(TAG, i + " dots drawn");
-            Log.w(TAG, newLine.getSize() + " dots in sketch");
-            Log.w(TAG, currentDrawing.getSize() + "Sketches in current drawing");
-        }
+        if(firstPoint) canvas.drawCircle(lastDraw.x, lastDraw.y,newLine.getWidth(),tester);
+        canvas.drawLine(lastDraw.x, lastDraw.y, thisDraw.x,thisDraw.y, tester);
+        //canvas.drawCircle(thisDraw.x, thisDraw.y, newLine.getWidth(), tester);
+        lastDraw=thisDraw;
     }
 
     public void updateView(Canvas canvas) {
@@ -96,16 +101,10 @@ public class DrawingView extends View {
         }
     }
 
-    // stop the game; may be called by the MainGameFragment onPause
-    public void stopDrawing() {
-
-    }
-
     // release resources; may be called by MainGameFragment onDestroy
     public void releaseResources() {
         // release any resources (e.g. SoundPool stuff)
     }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent e){
@@ -121,18 +120,21 @@ public class DrawingView extends View {
     }
 
     private void startLine(int x,int y){
+        firstPoint=true;
         lastDraw=new Point(x,y);
+        thisDraw=new Point(x,y); //Ensures draw if only single point
         newLine=new SingleLine(Color.BLACK,5,lastDraw);
     }
 
     private void dragLine(int x, int y)
     {
+        firstPoint=false;
         if((Math.abs(x-lastDraw.x) + Math.abs(y-lastDraw.y))>=2){
-            lastDraw=new Point(x,y);
-            newLine.add(lastDraw);
+            thisDraw=new Point(x,y);
+            newLine.add(thisDraw);
+            drawOnHiddenBitmap(bitmapCanvas);
+            invalidate();
         }
-        drawOnHiddenBitmap(bitmapCanvas);
-        invalidate();
     }
 
     private void endLine(int x, int y)
