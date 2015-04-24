@@ -68,12 +68,8 @@ public class DrawingView extends View {
         currentDrawing=new FullSketchObject();
     }
 
-    public void colorSelect(int color){
-        colorSelected=color;
-    }
 
     public void setLineStyle(){
-
     }
 
     @Override
@@ -91,7 +87,7 @@ public class DrawingView extends View {
         LinkedList<Point> thisLine=newLine.getLine();
         if(firstPoint) canvas.drawCircle(lastDraw.x, lastDraw.y,newLine.getWidth(),tester);
         canvas.drawLine(lastDraw.x, lastDraw.y, thisDraw.x,thisDraw.y, tester);
-        //canvas.drawCircle(thisDraw.x, thisDraw.y, newLine.getWidth(), tester);
+        canvas.drawCircle(thisDraw.x, thisDraw.y, newLine.getWidth(), tester);
         lastDraw=thisDraw;
     }
 
@@ -123,6 +119,7 @@ public class DrawingView extends View {
         firstPoint=true;
         lastDraw=new Point(x,y);
         thisDraw=new Point(x,y); //Ensures draw if only single point
+        //colorSelected=drawActivity.getSelectedColor();
         newLine=new SingleLine(Color.BLACK,5,lastDraw);
     }
 

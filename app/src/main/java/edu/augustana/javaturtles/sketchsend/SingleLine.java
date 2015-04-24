@@ -24,6 +24,8 @@ public class SingleLine {
         pointsOnLine.add(next);
     }
 
+    public void setColor(int color){this.color=color;}
+
     public int getColor(){return color;}
 
     public int getWidth(){return width;}
