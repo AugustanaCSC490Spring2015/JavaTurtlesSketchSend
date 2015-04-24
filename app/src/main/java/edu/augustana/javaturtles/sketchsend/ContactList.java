@@ -16,6 +16,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE;
+
 
 public class ContactList extends ActionBarActivity {
 
@@ -39,9 +41,11 @@ public class ContactList extends ActionBarActivity {
         contactsListView = (ListView) findViewById(R.id.contactsListView);
         savedContacts = getSharedPreferences(YOUR_CONTACTS, MODE_PRIVATE);
 
-//COMMENTED OUT TO ALLOW COMPILING
-      //  adapter = new ArrayAdapter<String>(this, R.layout.list_item, contactsList);
+
+        adapter = new ArrayAdapter<String>(this, R.layout.list_item, contactsList);
+
         contactsListView.setAdapter(adapter);
+        contactsListView.setChoiceMode(CHOICE_MODE_MULTIPLE);
 
         Button addContactButton = (Button) findViewById(R.id.addContact);
         addContactButton.setOnClickListener(addContactButtonListener);
@@ -70,8 +74,9 @@ public class ContactList extends ActionBarActivity {
 
     public void addContact(String newContact){
         contactsList.add(newContact);
+        contactNumber = contactsList.size()-1;
         SharedPreferences.Editor preferencesEditor = savedContacts.edit();
-        preferencesEditor.putString("contact" + (contactNumber -1), newContact);
+        preferencesEditor.putString("contact" + (contactNumber), newContact);
         preferencesEditor.apply();
 
         adapter.notifyDataSetChanged();
@@ -82,6 +87,8 @@ public class ContactList extends ActionBarActivity {
         for( int i = 0; i < contactsList.size(); i ++){
             contactsList.add(savedContacts.getString("contact" + i, "Logan Kruse"));
         }
+        adapter.notifyDataSetChanged();
+        contactsListView.setAdapter(adapter);
     }
 
 
@@ -100,7 +107,7 @@ public class ContactList extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.switch_user) {
+        if (id == R.id.action_settings) {
             return true;
         }
 
