@@ -1,44 +1,119 @@
 package edu.augustana.javaturtles.sketchsend;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
+
+import java.text.ParseException;
+import java.util.ArrayList;
 
 
 public class MainMenu extends ActionBarActivity {
+
+    private final String TAG = "SketchSend";
+
+    private ArrayList<String> userCredentials;
+    private Button sketchButton;
+    private Button inboxButton;
+    private Button contactsButton;
+    private ParseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-       /* try {
-            Parse.enableLocalDatastore(this);
-        } catch (IllegalStateException ex) {
-            ex.printStackTrace();
-        }
-         Parse.initialize(this, "9CyX7Z3iEe1RmHQ5Kq1OOsYgCBjc1o1qL3pfgZJ3", "buzay1iQNk7LpMrVpyfCVCtJodFaaHHfY6RsAFeq"); */
-
-        //do something on Parse.com
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
 
         //Creating sketchButton, inboxButton, contactsButton, and attaching listeners
-        Button sketchButton=(Button) findViewById(R.id.sketchButton);
+        sketchButton = (Button) findViewById(R.id.sketchButton);
         sketchButton.setOnClickListener(sketchMenuButtonHandler);
 
-        Button inboxButton=(Button) findViewById(R.id.inboxButton);
+        inboxButton = (Button) findViewById(R.id.inboxButton);
         inboxButton.setOnClickListener(inboxButtonHandler);
 
-        Button contactsButton=(Button) findViewById(R.id.contactsButton);
+        contactsButton = (Button) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(contactsButtonHandler);
+
+        //for testing
+        //ParseUser.logOut();
+        currentUser = ParseUser.getCurrentUser();
+        if (currentUser != null) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Welcome back " + currentUser.getUsername(), Toast.LENGTH_SHORT);
+            toast.show();
+
+        } else {
+            //make buttons unclickable until after SignUpCallback
+            createNewUser();
+        }
+//        //do something on Parse.com
+//        ParseObject testObject = new ParseObject("TestObject");
+//        testObject.put("foo", "bar");
+//        testObject.saveInBackground();
+
+    }
+
+    public void createNewUser() {
+        Log.w(TAG, "Create New User Call");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        builder.setTitle("Create New Account");
+        builder.setMessage("Please enter information");
+        View dialogCustomView = inflater.inflate(R.layout.custom_view, null);
+        builder.setView(dialogCustomView);
+        //Code that requires API 21 or higher
+        //builder.setView(R.layout.custom_view);
+        final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText);
+        final EditText email = (EditText) dialogCustomView.findViewById(R.id.EmailEditText);
+        final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText);
+        //In case it gives you an error for setView(View) try
+        builder.setPositiveButton("Create Account", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                currentUser = new ParseUser();
+                currentUser.setUsername(username.getText().toString());
+                currentUser.setEmail(email.getText().toString());
+                currentUser.setPassword(password.getText().toString());
+                Log.w(TAG, "Credentials from createNewUser(): Username = " + currentUser.getUsername() + "Email = " + currentUser.getEmail());
+                finishSignIn();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+
+    }
+    private void finishSignIn() {
+        Log.w(TAG, "Credentials from onCreate(): Username = " + currentUser.getUsername() + "Email = " + currentUser.getEmail());
+        Toast toast = Toast.makeText(getApplicationContext(), "Please wait while we check those credentials", Toast.LENGTH_SHORT);
+        toast.show();
+        currentUser.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Welcome, " + currentUser.getUsername(), Toast.LENGTH_SHORT);
+                    toast.show();
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Invalid Combination of Credentials.  Please Try Again", Toast.LENGTH_SHORT);
+                    toast.show();
+                    createNewUser();
+                }
+            }
+        });
 
     }
 
@@ -91,9 +166,5 @@ public class MainMenu extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        finish();
-    }
+
 }
