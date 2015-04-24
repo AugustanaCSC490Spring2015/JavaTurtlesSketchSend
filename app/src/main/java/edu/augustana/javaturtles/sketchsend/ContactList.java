@@ -1,17 +1,87 @@
 package edu.augustana.javaturtles.sketchsend;
 
+
+import android.app.ListActivity;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+
+
+import java.util.ArrayList;
 
 
 public class ContactList extends ActionBarActivity {
+
+    private static final String YOUR_CONTACTS = "Your Contacts";
+
+    private EditText newContact;
+    private ArrayList<String> contactsList;
+    private SharedPreferences savedContacts;
+    private int contactNumber;
+    private ArrayAdapter<String> adapter;
+    private ListView contactsListView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
+
+        contactsList = new ArrayList<String>();
+        newContact = (EditText) findViewById(R.id.contactsEditText);
+        contactsListView = (ListView) findViewById(R.id.contactsListView);
+        savedContacts = getSharedPreferences(YOUR_CONTACTS, MODE_PRIVATE);
+
+
+        adapter = new ArrayAdapter<String>(this, R.layout.list_item, contactsList);
+        contactsListView.setAdapter(adapter);
+
+        Button addContactButton = (Button) findViewById(R.id.addContact);
+        addContactButton.setOnClickListener(addContactButtonListener);
+
+        initializeContacts();
+
+        contactNumber = contactsList.size();
+
+    }
+
+//    listener for addContactButton
+    public View.OnClickListener addContactButtonListener = new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            if (newContact.getText().length() > 0 ){
+                addContact(newContact.getText().toString());
+                newContact.setText("");
+
+                
+            }
+
+        }
+
+
+    };
+
+    public void addContact(String newContact){
+        contactsList.add(newContact);
+        SharedPreferences.Editor preferencesEditor = savedContacts.edit();
+        preferencesEditor.putString("contact" + (contactNumber -1), newContact);
+        preferencesEditor.apply();
+
+        adapter.notifyDataSetChanged();
+
+    }
+
+    public void initializeContacts(){
+        for( int i = 0; i < contactsList.size(); i ++){
+            contactsList.add(savedContacts.getString("contact" + i, "Logan Kruse"));
+        }
     }
 
 
@@ -36,4 +106,7 @@ public class ContactList extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
 }

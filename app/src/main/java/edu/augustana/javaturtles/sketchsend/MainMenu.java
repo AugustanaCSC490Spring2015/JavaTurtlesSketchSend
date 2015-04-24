@@ -108,6 +108,7 @@ public class MainMenu extends ActionBarActivity {
                     Toast toast = Toast.makeText(getApplicationContext(), "Welcome, " + currentUser.getUsername(), Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
+                    Log.w(TAG, "" + e.getMessage());
                     Toast toast = Toast.makeText(getApplicationContext(), "Invalid Combination of Credentials.  Please Try Again", Toast.LENGTH_SHORT);
                     toast.show();
                     createNewUser();
