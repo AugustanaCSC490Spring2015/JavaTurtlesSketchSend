@@ -1,12 +1,10 @@
 package edu.augustana.javaturtles.sketchsend;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,12 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.Parse;
-import com.parse.ParseObject;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 
 
@@ -50,8 +46,6 @@ public class MainMenu extends ActionBarActivity {
         contactsButton = (Button) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(contactsButtonHandler);
 
-        //for testing
-        //ParseUser.logOut();
         currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
             Toast toast = Toast.makeText(getApplicationContext(), "Welcome back " + currentUser.getUsername(), Toast.LENGTH_SHORT);
@@ -72,12 +66,12 @@ public class MainMenu extends ActionBarActivity {
         Log.w(TAG, "Create New User Call");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        builder.setTitle("Create New Account");
-        builder.setMessage("Please enter information");
-        View dialogCustomView = inflater.inflate(R.layout.custom_view, null);
+        builder.setTitle("Create User");
+        builder.setMessage("Please enter your Information");
+        View dialogCustomView = inflater.inflate(R.layout.three_options_view, null);
         builder.setView(dialogCustomView);
         //Code that requires API 21 or higher
-        //builder.setView(R.layout.custom_view);
+        //builder.setView(R.layout.three_options_view);
         final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText);
         final EditText email = (EditText) dialogCustomView.findViewById(R.id.EmailEditText);
         final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText);
@@ -93,9 +87,41 @@ public class MainMenu extends ActionBarActivity {
                 finishSignIn();
             }
         });
+
         builder.setCancelable(false);
         builder.show();
 
+    }
+
+    private void logIn() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        builder.setTitle("Log In");
+        builder.setMessage("Please enter your Login Information");
+        View dialogCustomView = inflater.inflate(R.layout.two_options_view, null);
+        builder.setView(dialogCustomView);
+        //Code that requires API 21 or higher
+        //builder.setView(R.layout.three_options_view);
+        final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText);
+        final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText);
+        //In case it gives you an error for setView(View) try
+        builder.setPositiveButton("Log In", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    ParseUser.logIn(username.getText().toString(), password.getText().toString());
+                    currentUser = ParseUser.getCurrentUser();
+                    Toast toast = Toast.makeText(getApplicationContext(), "Welcome, " + currentUser.getUsername(), Toast.LENGTH_SHORT);
+                    toast.show();
+                } catch (ParseException e) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Invalid Login. Please Try Again", Toast.LENGTH_SHORT);
+                    toast.show();
+                    createNewUser();
+                }
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
     }
     private void finishSignIn() {
         Log.w(TAG, "Credentials from onCreate(): Username = " + currentUser.getUsername() + "Email = " + currentUser.getEmail());
@@ -115,6 +141,7 @@ public class MainMenu extends ActionBarActivity {
                 }
             }
         });
+
 
     }
 
@@ -160,7 +187,14 @@ public class MainMenu extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.switch_user) {
+            ParseUser.logOut();
+            logIn();
+            return true;
+        }
+        if (id == R.id.create_account) {
+            ParseUser.logOut();
+            createNewUser();
             return true;
         }
 

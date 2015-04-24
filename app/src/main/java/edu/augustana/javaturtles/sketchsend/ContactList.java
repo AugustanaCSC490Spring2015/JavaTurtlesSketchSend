@@ -39,8 +39,8 @@ public class ContactList extends ActionBarActivity {
         contactsListView = (ListView) findViewById(R.id.contactsListView);
         savedContacts = getSharedPreferences(YOUR_CONTACTS, MODE_PRIVATE);
 
-
-        adapter = new ArrayAdapter<String>(this, R.layout.list_item, contactsList);
+//COMMENTED OUT TO ALLOW COMPILING
+      //  adapter = new ArrayAdapter<String>(this, R.layout.list_item, contactsList);
         contactsListView.setAdapter(adapter);
 
         Button addContactButton = (Button) findViewById(R.id.addContact);
@@ -100,7 +100,7 @@ public class ContactList extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.switch_user) {
             return true;
         }
 
