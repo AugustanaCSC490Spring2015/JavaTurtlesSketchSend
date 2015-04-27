@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +30,7 @@ public class ContactList extends ActionBarActivity {
     private int contactNumber;
     private ArrayAdapter<String> adapter;
     private ListView contactsListView;
+    private int totalContacts;
 
 
     @Override
@@ -40,19 +42,14 @@ public class ContactList extends ActionBarActivity {
         newContact = (EditText) findViewById(R.id.contactsEditText);
         contactsListView = (ListView) findViewById(R.id.contactsListView);
         savedContacts = getSharedPreferences(YOUR_CONTACTS, MODE_PRIVATE);
-
+        initializeContacts();
 
         adapter = new ArrayAdapter<String>(this, R.layout.list_item, contactsList);
-
         contactsListView.setAdapter(adapter);
         contactsListView.setChoiceMode(CHOICE_MODE_MULTIPLE);
 
         Button addContactButton = (Button) findViewById(R.id.addContact);
         addContactButton.setOnClickListener(addContactButtonListener);
-
-        initializeContacts();
-
-        contactNumber = contactsList.size();
 
     }
 
@@ -63,8 +60,6 @@ public class ContactList extends ActionBarActivity {
             if (newContact.getText().length() > 0 ){
                 addContact(newContact.getText().toString());
                 newContact.setText("");
-
-                
             }
 
         }
@@ -75,8 +70,11 @@ public class ContactList extends ActionBarActivity {
     public void addContact(String newContact){
         contactsList.add(newContact);
         contactNumber = contactsList.size()-1;
+        totalContacts++;
         SharedPreferences.Editor preferencesEditor = savedContacts.edit();
-        preferencesEditor.putString("contact" + (contactNumber), newContact);
+        preferencesEditor.putString("contact" + contactNumber, newContact);
+        preferencesEditor.putInt("totCont", totalContacts);
+
         preferencesEditor.apply();
 
         adapter.notifyDataSetChanged();
@@ -84,11 +82,13 @@ public class ContactList extends ActionBarActivity {
     }
 
     public void initializeContacts(){
-        for( int i = 0; i < contactsList.size(); i ++){
-            contactsList.add(savedContacts.getString("contact" + i, "Logan Kruse"));
+        String nameTest;
+        totalContacts = savedContacts.getInt("totCont", 0);
+        for( int i = 0; i < totalContacts; i++){
+            nameTest = savedContacts.getString("contact" + i, "Logan Kruse");
+            Log.d("INIT TEST", nameTest);
+            contactsList.add(nameTest);
         }
-        adapter.notifyDataSetChanged();
-        contactsListView.setAdapter(adapter);
     }
 
 

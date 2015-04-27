@@ -18,10 +18,10 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
 
             android:id="@+id/addContactsPromptTextView"
-            android:text="add contact: " />
+            android:text="Add Contact: " />
 
         <EditText
-            android:layout_width="fill_parent"
+            android:layout_width="245dp"
             android:layout_height="wrap_content"
             android:id="@+id/contactsEditText" />
     </LinearLayout>
@@ -47,7 +47,7 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="512dp"
+        android:layout_height="395dp"
         android:id="@+id/contactsListView"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/addContact"
