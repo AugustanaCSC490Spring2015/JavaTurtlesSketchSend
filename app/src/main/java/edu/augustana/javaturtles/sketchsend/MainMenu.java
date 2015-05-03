@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.parse.ParseException;
@@ -26,9 +27,9 @@ public class MainMenu extends ActionBarActivity {
     private final String TAG = "SketchSend";
 
     private ArrayList<String> userCredentials;
-    private Button sketchButton;
-    private Button inboxButton;
-    private Button contactsButton;
+    private ImageButton sketchButton;
+    private ImageButton inboxButton;
+    private ImageButton contactsButton;
     private ParseUser currentUser;
 
     @Override
@@ -37,13 +38,13 @@ public class MainMenu extends ActionBarActivity {
         setContentView(R.layout.activity_main_menu);
 
         //Creating sketchButton, inboxButton, contactsButton, and attaching listeners
-        sketchButton = (Button) findViewById(R.id.sketchButton);
+        sketchButton = (ImageButton) findViewById(R.id.sketchButton);
         sketchButton.setOnClickListener(sketchMenuButtonHandler);
 
-        inboxButton = (Button) findViewById(R.id.inboxButton);
+        inboxButton = (ImageButton) findViewById(R.id.inboxButton);
         inboxButton.setOnClickListener(inboxButtonHandler);
 
-        contactsButton = (Button) findViewById(R.id.contactsButton);
+        contactsButton = (ImageButton) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(contactsButtonHandler);
 
         currentUser = ParseUser.getCurrentUser();
