@@ -3,6 +3,7 @@ package edu.augustana.javaturtles.sketchsend;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,11 +32,15 @@ public class MainMenu extends ActionBarActivity {
     private ImageButton inboxButton;
     private ImageButton contactsButton;
     private ParseUser currentUser;
+    private ActionBar myBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        myBar = getSupportActionBar();
+        myBar.setTitle("");
 
         //Creating sketchButton, inboxButton, contactsButton, and attaching listeners
         sketchButton = (ImageButton) findViewById(R.id.sketchButton);

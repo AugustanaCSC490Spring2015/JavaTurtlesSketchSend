@@ -2,10 +2,14 @@
     android:id="@+id/checked_list"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:drawableLeft="?android:attr/listChoiceIndicatorMultiple"
     android:saveEnabled="false"
-    android:checked="false">
+    android:checked="false"
+    android:gravity="center_vertical|left"
+    android:textSize="20dp"
+    android:includeFontPadding="false"
+    android:textAllCaps="false"
+    android:drawablePadding="20dp">
 
 </CheckedTextView>

@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,13 +39,13 @@ public class ContactList extends ActionBarActivity {
     private static final String YOUR_CONTACTS = "Your Contacts";
     private static final String TAG = "ContactList";
 
-    private EditText newContact;
     private ArrayList<String> contactsList;
     private SharedPreferences savedContacts;
     private int contactNumber;
     private ArrayAdapter<String> adapter;
     private ListView contactsListView;
     private int totalContacts;
+    private ActionBar myBar;
 
 
     @Override
@@ -50,8 +53,10 @@ public class ContactList extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
+        myBar = getSupportActionBar();
+        myBar.setTitle("");
+
         contactsList = new ArrayList<String>();
-        newContact = (EditText) findViewById(R.id.contactsEditText);
         contactsListView = (ListView) findViewById(R.id.contactsListView);
         savedContacts = getSharedPreferences(YOUR_CONTACTS, MODE_PRIVATE);
         initializeContacts();
@@ -60,7 +65,7 @@ public class ContactList extends ActionBarActivity {
         contactsListView.setAdapter(adapter);
         contactsListView.setChoiceMode(CHOICE_MODE_MULTIPLE);
 
-        Button addContactButton = (Button) findViewById(R.id.addContact);
+        ImageButton addContactButton = (ImageButton) findViewById(R.id.addContact);
         addContactButton.setOnClickListener(addContactButtonListener);
 
         contactsListView.setOnItemLongClickListener(itemLongClickListener);
@@ -73,39 +78,65 @@ public class ContactList extends ActionBarActivity {
 public View.OnClickListener addContactButtonListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
-        if (newContact.getText().length() > 0) {
-            final String possibleContact = newContact.getText().toString();
-            final ParseQuery<ParseUser> query = ParseUser.getQuery();
-            query.whereEqualTo("username", possibleContact);
-            query.findInBackground(new FindCallback<ParseUser>() {
-                @Override
-                public void done(List<ParseUser> parseUsers, com.parse.ParseException e) {
-                    if (e == null) {
-                        try {
-                            if (contactsList.contains(possibleContact)) {
-                                Toast toast = Toast.makeText(getApplicationContext(), "Contact already exists", Toast.LENGTH_SHORT);
-                                toast.show();
-                            } else {
-                                if (query.count() == 1) {
-                                    addContact(possibleContact);
-                                } else {
-                                    Toast toast = Toast.makeText(getApplicationContext(), "That is not a valid account", Toast.LENGTH_SHORT);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ContactList.this);
+
+        builder.setTitle("Add a new contact:");
+
+        final EditText input = new EditText(ContactList.this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (input.getText().length() > 0) {
+                    final String possibleContact = input.getText().toString();
+                    final ParseQuery<ParseUser> query = ParseUser.getQuery();
+                    query.whereEqualTo("username", possibleContact);
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> parseUsers, com.parse.ParseException e) {
+                            if (e == null) {
+                                try {
+                                    if (contactsList.contains(possibleContact)) {
+                                        Toast toast = Toast.makeText(getApplicationContext(), "Contact already exists", Toast.LENGTH_SHORT);
+                                        toast.show();
+                                    } else {
+                                        if (query.count() == 1) {
+                                            addContact(possibleContact);
+                                        } else {
+                                            Toast toast = Toast.makeText(getApplicationContext(), "That is not a valid account", Toast.LENGTH_SHORT);
+                                            toast.show();
+                                        }
+                                    }
+                                } catch (com.parse.ParseException e1) {
+                                    Toast toast = Toast.makeText(getApplicationContext(), "Oops an error occurred!", Toast.LENGTH_SHORT);
                                     toast.show();
                                 }
+                            } else {
+                                Toast toast = Toast.makeText(getApplicationContext(), "Oops an error occurred!", Toast.LENGTH_SHORT);
+                                toast.show();
                             }
-                        } catch (com.parse.ParseException e1) {
-                            Toast toast = Toast.makeText(getApplicationContext(), "Oops an error occurred!", Toast.LENGTH_SHORT);
-                            toast.show();
                         }
-                    } else {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Oops an error occurred!", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                }
 
-            });
-            newContact.setText("");
-        }
+                    });
+                    input.setText("");
+            } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "You didn't enter any characters!", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+           }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.show();
+
     }
 };
 
