@@ -8,25 +8,36 @@ import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import com.parse.ParseUser;
 
 
 public class DrawActivity extends ActionBarActivity {
+
+    private final String TAG = "DrawActivity";
 
     private Button colorSelect;
     private Button widthSelect;
     private Button sendSketch;
 
-    private int selectedWidth=10;
-    private int selectedColor= Color.BLACK;
+    private TextView customWidth;
+    private DrawingView theDrawingView;
+
+    private int selectedWidth = 10;
+    public int selectedColor = Color.BLACK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
 
-        DrawingView theDrawingView =  (DrawingView) findViewById(R.id.the_drawing_view);
+        theDrawingView = (DrawingView) findViewById(R.id.the_drawing_view);
         Log.w("DRAW_ACTIVITY", "drawing view = " + theDrawingView);
 
 
@@ -40,40 +51,66 @@ public class DrawActivity extends ActionBarActivity {
         sendSketch.setOnClickListener(sendSketchHandler);
 
 
-
     }
 
-    View.OnClickListener colorSelectHandler=new View.OnClickListener(){
+    View.OnClickListener colorSelectHandler = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.w(TAG, "Create Color Call");
+            AlertDialog.Builder builder = new AlertDialog.Builder(DrawActivity.this);
+            builder.setTitle(R.string.color_selector)
+                    .setItems(R.array.colors_array, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            selectedColor = which;
+                            Log.w(TAG, which+"");
+                            theDrawingView.setColorSelected(selectedColor);
+                        }
+                    })
+                    .show();
+        }
+    };
+
+    View.OnClickListener widthSelectHandler = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.w(TAG, "Create New User Call");
+            AlertDialog.Builder builder = new AlertDialog.Builder(DrawActivity.this);
+            LayoutInflater inflater = DrawActivity.this.getLayoutInflater();
+            builder.setTitle("Width Selector");
+            View dialogCustomView = inflater.inflate(R.layout.width_select_view, null);
+            builder.setView(dialogCustomView);
+            customWidth = (TextView)dialogCustomView.findViewById(R.id.custom_width);
+            SeekBar widthSeekBar = (SeekBar)dialogCustomView.findViewById(R.id.widthSeekBar);
+            widthSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    selectedWidth = progress + 1;
+                    customWidth.setText(""+selectedWidth);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                }});
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    theDrawingView.setWidthSelected(selectedWidth);
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
+        }
+    };
+
+    View.OnClickListener sendSketchHandler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
-
-    View.OnClickListener widthSelectHandler=new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-
-        }
-    };
-
-    View.OnClickListener sendSketchHandler = new View.OnClickListener(){
-        @Override
-        public void onClick(View v) {
-
-        }
-    };
-
-//    public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle(R.string.pick_color)
-//                .setItems(R.array.colors_array, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        selectedColor=which;
-//                    }
-//                });
-//        return builder.create();
-//    }
-
-    public int getSelectedColor(){ return selectedColor;}
 }
+

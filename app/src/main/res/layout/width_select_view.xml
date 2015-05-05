@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Slide to set a width:"
+        android:id="@+id/slider_text"
+        android:layout_gravity="center_horizontal"
+        android:textColor="#ff000000"
+        android:textSize="25dp" />
+
+    <SeekBar
+        android:layout_width="342dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/widthSeekBar"
+        android:layout_gravity="center_horizontal"
+        android:progress="9"
+        android:max="24" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Width: "
+            android:id="@+id/width_set"
+            android:textColor="#ff000000"
+            android:textSize="25dp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:id="@+id/custom_width"
+            android:textColor="#ff000000"
+            android:textSize="25dp"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 public class DrawFragment extends Fragment {
 
     private DrawingView drawingView;
+    public int test=1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

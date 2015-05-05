@@ -1,6 +1,7 @@
 package edu.augustana.javaturtles.sketchsend;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -15,10 +16,9 @@ import android.view.View;
 import java.util.LinkedList;
 
 public class DrawingView extends View {
-    private static final String TAG = "SketchSend"; // for Log.w(TAG, ...)
+    private static final String TAG = "SketchSendView"; // for Log.w(TAG, ...)
 
-    private Activity drawActivity; // keep a reference to the main Activity
-
+    private Activity myDrawActivity; // keep a reference to the main Activity
 
     private Paint backgroundPaint;
     private Bitmap bitmap;
@@ -31,8 +31,8 @@ public class DrawingView extends View {
 
     private FullSketchObject currentDrawing;
 
-    private int colorSelected;
-    private int lineWidth;
+    private int lineColor=Color.BLACK;
+    private int lineWidth=10;
     private int circleRadius;
     private int screenWidth;
     private int screenHeight;
@@ -42,12 +42,14 @@ public class DrawingView extends View {
     public DrawingView(Context context, AttributeSet atts) {
         super(context, atts);
         Log.w(TAG, "drawing view created");
-        drawActivity = (Activity) context;
+        myDrawActivity = (Activity) context;
 
         backgroundPaint=new Paint();
         backgroundPaint.setColor(Color.WHITE);
 
         currentDrawing=new FullSketchObject();
+
+        //colorSelected=myDrawActivity.getSelectedColor();
     }
 
     // called when the size changes (and first time, when view is created)
@@ -69,7 +71,29 @@ public class DrawingView extends View {
     }
 
 
-    public void setLineStyle(){
+    public void setColorSelected(int colorSelected){
+        Log.w(TAG, colorSelected+"");
+        if(colorSelected==0){
+            lineColor=Color.RED;
+        }else if(colorSelected==1){
+            lineColor=Color.rgb(255,175,0);
+        }else if(colorSelected==2){
+            lineColor=Color.YELLOW;
+        }else if(colorSelected==3){
+            lineColor=Color.GREEN;
+        }else if(colorSelected==4){
+            lineColor=Color.BLUE;
+        }else if(colorSelected==5){
+            lineColor=Color.rgb(255,0,175);
+        }else if(colorSelected==6){
+            lineColor=Color.BLACK;
+        }else{
+            lineColor=Color.WHITE;
+        }
+    }
+
+    public void setWidthSelected(int selectedWidth){
+        lineWidth=selectedWidth*2;
     }
 
     @Override
@@ -81,13 +105,12 @@ public class DrawingView extends View {
     public void drawOnHiddenBitmap(Canvas canvas){
         Paint tester=new Paint();
         tester.setColor(newLine.getColor());
-        int widthTester=10;
-        tester.setStrokeWidth(widthTester);
+        tester.setStrokeWidth(lineWidth);
 
-        LinkedList<Point> thisLine=newLine.getLine();
-        if(firstPoint) canvas.drawCircle(lastDraw.x, lastDraw.y,newLine.getWidth(),tester);
+//        LinkedList<Point> thisLine=newLine.getLine();
+        if(firstPoint) canvas.drawCircle(lastDraw.x, lastDraw.y,newLine.getWidth()/2,tester);
         canvas.drawLine(lastDraw.x, lastDraw.y, thisDraw.x,thisDraw.y, tester);
-        canvas.drawCircle(thisDraw.x, thisDraw.y, newLine.getWidth(), tester);
+        canvas.drawCircle(thisDraw.x, thisDraw.y, newLine.getWidth()/2, tester);
         lastDraw=thisDraw;
     }
 
@@ -119,8 +142,7 @@ public class DrawingView extends View {
         firstPoint=true;
         lastDraw=new Point(x,y);
         thisDraw=new Point(x,y); //Ensures draw if only single point
-        //colorSelected=drawActivity.getSelectedColor();
-        newLine=new SingleLine(Color.BLACK,5,lastDraw);
+        newLine=new SingleLine(lineColor,lineWidth,lastDraw);
     }
 
     private void dragLine(int x, int y)
