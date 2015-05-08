@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -190,6 +191,19 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
 
     }
 
+    public List<String> getSelectedContacts(){
+        int count = contactsListView.getCount();
+        List<String> contacts = new ArrayList<String>();
+        SparseBooleanArray checked = contactsListView.getCheckedItemPositions();
+
+        for (int i=0; i < count; i++){
+            if (checked.get(i)){
+                contacts.add(contactsList.get(i));
+            }
+        }
+        return contacts;
+    }
+
     public void deleteContact(String contactToDelete) {
         //get index to delete from array list
         contactNumber = contactsList.indexOf(contactToDelete);
@@ -240,6 +254,15 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+
+        if (id== R.id.selected_contacts){
+            List<String> contacts= new ArrayList<String>();
+            contacts = getSelectedContacts();
+            for (int i = 0; i < contacts.size() ; i++){
+                Toast toast = Toast.makeText(getApplicationContext(), contacts.get(i), Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
 
         return super.onOptionsItemSelected(item);
