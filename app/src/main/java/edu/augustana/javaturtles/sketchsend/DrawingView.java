@@ -59,7 +59,6 @@ public class DrawingView extends View {
     }
 
     // called when the size changes (and first time, when view is created)
-    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
@@ -124,11 +123,6 @@ public class DrawingView extends View {
         if (canvas != null) {
             canvas.drawRect(0, 0, screenWidth, screenHeight, backgroundPaint);
         }
-    }
-
-    // release resources; may be called by MainGameFragment onDestroy
-    public void releaseResources() {
-        // release any resources (e.g. SoundPool stuff)
     }
 
     @Override
