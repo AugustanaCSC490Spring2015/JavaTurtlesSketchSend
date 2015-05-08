@@ -178,7 +178,7 @@ public class DrawingView extends View {
 
     public String createGson(){
         Gson gson=new Gson();
-        String serializedDrawing=gson.toJson(currentDrawing);
-        return serializedDrawing;
+        String serializedDrawingObject=gson.toJson(currentDrawing);
+        return serializedDrawingObject;
     }
 }
