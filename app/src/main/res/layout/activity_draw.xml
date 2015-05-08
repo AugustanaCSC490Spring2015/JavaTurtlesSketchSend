@@ -2,7 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/container"
     android:layout_width="match_parent" android:layout_height="match_parent"
     tools:context="edu.augustana.javaturtles.sketchsend.DrawActivity"
-    tools:ignore="MergeRootFrame" >
+    tools:ignore="MergeRootFrame">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom">
+
+    </RelativeLayout>
 
     <fragment
         android:layout_width="wrap_content"
@@ -11,31 +18,55 @@
         android:id="@+id/main_drawing_fragment"
         android:layout_gravity="left|top" />
 
-    <LinearLayout
+    <GridLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom" >
+        android:layout_gravity="center_horizontal|bottom"
+        android:rowCount="1"
+        android:columnCount="4"
+        android:columnOrderPreserved="true"
+        android:useDefaultMargins="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layoutMode="clipBounds"
+        android:rowOrderPreserved="true">
 
-        <Button
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:text="Color"
             android:id="@+id/colorButton"
-            android:layout_gravity="bottom" />
+            android:src="@drawable/colorbutton"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_column="0"
+            android:layout_gravity="fill_horizontal|center_horizontal|left"
+            android:padding="5dp" />
 
-        <Button
-            android:layout_width="wrap_content"
+        <ImageButton
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:text="Width"
             android:id="@+id/widthButton"
-            android:layout_gravity="bottom" />
+            android:src="@drawable/widthbutton"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_column="1"
+            android:layout_gravity="fill_horizontal|center_horizontal"
+            android:padding="5dp" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send Sketch!"
-            android:id="@+id/sendSketchButton" />
-    </LinearLayout>
+        <ImageButton
+            android:layout_width="120dp"
+            android:layout_height="55dp"
+            android:id="@+id/sketchSendButton"
+            android:src="@drawable/sendbutton"
+            android:scaleType="fitXY"
+            android:background="@null"
+            android:layout_column="3"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:layout_row="0"
+            android:adjustViewBounds="false"
+            android:cropToPadding="true" />
+    </GridLayout>
 
 </FrameLayout>
