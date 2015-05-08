@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.gson.Gson;
+
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -163,11 +165,20 @@ public class DrawingView extends View {
     private void endLine(int x, int y)
     {
         newLine.add(new Point(x,y));
-        currentDrawing.add(newLine);
         drawOnHiddenBitmap(bitmapCanvas);
         invalidate();
-        JSONObject thisObject=newLine.toJSON();
-        System.out.println(thisObject);
+        currentDrawing.add(newLine);
+
+        Gson thisObject=new Gson();
+        String testingAgain=thisObject.toJson(currentDrawing);
+        FullSketchObject testSketch=thisObject.fromJson(testingAgain, FullSketchObject.class);
+        System.out.println("This Is the Gson: "+ testingAgain);
+        System.out.println("Testing the color: " + testSketch.getIndexColor());
     }
 
+    public String createGson(){
+        Gson gson=new Gson();
+        String serializedDrawing=gson.toJson(currentDrawing);
+        return serializedDrawing;
+    }
 }

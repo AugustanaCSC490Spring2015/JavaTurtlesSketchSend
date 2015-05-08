@@ -80,6 +80,7 @@ public class DrawActivity extends ActionBarActivity {
             View dialogCustomView = inflater.inflate(R.layout.width_select_view, null);
             builder.setView(dialogCustomView);
             customWidth = (TextView)dialogCustomView.findViewById(R.id.custom_width);
+            selectedWidth=10;
             SeekBar widthSeekBar = (SeekBar)dialogCustomView.findViewById(R.id.widthSeekBar);
             widthSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -109,7 +110,7 @@ public class DrawActivity extends ActionBarActivity {
     View.OnClickListener sendSketchHandler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            String serializedDrawing = theDrawingView.createGson();
         }
     };
 }

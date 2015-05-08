@@ -39,27 +39,4 @@ public class SingleLine {
 
     public int getSize(){return pointsOnLine.size();}
 
-    //Code from http://stackoverflow.com/questions/4841952/convert-arraylistmycustomclass-to-jsonarray
-    public JSONObject toJSON(){
-        Gson gson=new Gson();
-        JSONObject finishedLine=new JSONObject();
-        String _color=color+"";
-        String _width=width+"";
-        gson.toJson(width);
-        try {
-            finishedLine.put("Color", _color);
-            finishedLine.put("Width",_width);
-            JSONArray coordinates=new JSONArray();
-            JSONObject thisPoint=new JSONObject();
-            for (int i=0; i < pointsOnLine.size(); i++) {
-                thisPoint.put("Point", pointsOnLine.get(i).toString());
-                coordinates.put(thisPoint);
-            }
-            finishedLine.put("Points",coordinates);
-
-        }catch(JSONException e){
-            e.printStackTrace();
-        }
-        return finishedLine;
-    }
 }

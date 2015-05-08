@@ -27,4 +27,6 @@ public class FullSketchObject {
     public LinkedList<SingleLine> getFullDrawing(){return fullDrawing;}
 
     public int getSize(){return fullDrawing. size();}
+
+    public int getIndexColor(){return fullDrawing.get(0).getColor();}
 }
