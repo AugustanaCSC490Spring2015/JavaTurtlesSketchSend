@@ -7,17 +7,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/username_text"
-        android:id="@+id/UsernameEditText" />
+        android:id="@+id/UsernameEditText3" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email_text"
-        android:id="@+id/EmailEditText"/>
+        android:id="@+id/EmailEditText3"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password_text"
-        android:id="@+id/PasswordEditText"
+        android:id="@+id/PasswordEditText3"
         android:password="true" />
 
 </LinearLayout>

@@ -59,7 +59,7 @@ public class MainMenu extends ActionBarActivity {
 
         } else {
             //make buttons unclickable until after SignUpCallback
-            createNewUser();
+            logIn();
         }
 //        //do something on Parse.com
 //        ParseObject testObject = new ParseObject("TestObject");
@@ -78,13 +78,18 @@ public class MainMenu extends ActionBarActivity {
         builder.setView(dialogCustomView);
         //Code that requires API 21 or higher
         //builder.setView(R.layout.three_options_view);
-        final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText);
-        final EditText email = (EditText) dialogCustomView.findViewById(R.id.EmailEditText);
-        final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText);
+        final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText3);
+        final EditText email = (EditText) dialogCustomView.findViewById(R.id.EmailEditText3);
+        final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText3);
         //In case it gives you an error for setView(View) try
         builder.setPositiveButton("Create Account", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                if(password.getText().toString().length() == 0) {
+                    Toast toast = Toast.makeText(getApplicationContext(), "You must enter a password", Toast.LENGTH_SHORT);
+                    toast.show();
+                    createNewUser();
+                }
                 currentUser = new ParseUser();
                 currentUser.setUsername(username.getText().toString());
                 currentUser.setEmail(email.getText().toString());
@@ -93,7 +98,6 @@ public class MainMenu extends ActionBarActivity {
                 finishSignIn();
             }
         });
-
         builder.setCancelable(false);
         builder.show();
 
@@ -108,8 +112,8 @@ public class MainMenu extends ActionBarActivity {
         builder.setView(dialogCustomView);
         //Code that requires API 21 or higher
         //builder.setView(R.layout.three_options_view);
-        final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText);
-        final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText);
+        final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText2);
+        final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText2);
         //In case it gives you an error for setView(View) try
         builder.setPositiveButton("Log In", new DialogInterface.OnClickListener() {
             @Override
@@ -122,8 +126,14 @@ public class MainMenu extends ActionBarActivity {
                 } catch (ParseException e) {
                     Toast toast = Toast.makeText(getApplicationContext(), "Invalid Login. Please Try Again", Toast.LENGTH_SHORT);
                     toast.show();
-                    createNewUser();
+                    logIn();
                 }
+            }
+        });
+        builder.setNegativeButton("Create Account", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                createNewUser();
             }
         });
         builder.setCancelable(false);
