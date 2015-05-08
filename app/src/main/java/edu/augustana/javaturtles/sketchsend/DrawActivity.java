@@ -49,7 +49,7 @@ public class DrawActivity extends ActionBarActivity {
         widthSelect = (ImageButton) findViewById(R.id.widthButton);
         widthSelect.setOnClickListener(widthSelectHandler);
 
-        sendSketch = (ImageButton) findViewById(R.id.sendSketchButton);
+        sendSketch = (ImageButton) findViewById(R.id.sketchSendButton);
         sendSketch.setOnClickListener(sendSketchHandler);
 
 
