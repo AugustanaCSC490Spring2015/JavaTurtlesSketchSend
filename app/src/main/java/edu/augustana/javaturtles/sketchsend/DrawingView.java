@@ -13,7 +13,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class DrawingView extends View {
     private static final String TAG = "SketchSendView"; // for Log.w(TAG, ...)
@@ -29,6 +33,7 @@ public class DrawingView extends View {
     private Point thisDraw;
     private boolean firstPoint=true;
 
+    private List<String> testList;
     private FullSketchObject currentDrawing;
 
     private int lineColor=Color.BLACK;
@@ -48,8 +53,7 @@ public class DrawingView extends View {
         backgroundPaint.setColor(Color.WHITE);
 
         currentDrawing=new FullSketchObject();
-
-        //colorSelected=myDrawActivity.getSelectedColor();
+        testList=new ArrayList<String>();
     }
 
     // called when the size changes (and first time, when view is created)
@@ -103,14 +107,14 @@ public class DrawingView extends View {
     }
 
     public void drawOnHiddenBitmap(Canvas canvas){
-        Paint tester=new Paint();
-        tester.setColor(newLine.getColor());
-        tester.setStrokeWidth(lineWidth);
+        Paint painter=new Paint();
+        painter.setColor(lineColor);
+        painter.setStrokeWidth(lineWidth);
 
 //        LinkedList<Point> thisLine=newLine.getLine();
-        if(firstPoint) canvas.drawCircle(lastDraw.x, lastDraw.y,newLine.getWidth()/2,tester);
-        canvas.drawLine(lastDraw.x, lastDraw.y, thisDraw.x,thisDraw.y, tester);
-        canvas.drawCircle(thisDraw.x, thisDraw.y, newLine.getWidth()/2, tester);
+        if(firstPoint) canvas.drawCircle(lastDraw.x, lastDraw.y,newLine.getWidth()/2,painter);
+        canvas.drawLine(lastDraw.x, lastDraw.y, thisDraw.x,thisDraw.y, painter);
+        canvas.drawCircle(thisDraw.x, thisDraw.y, newLine.getWidth()/2, painter);
         lastDraw=thisDraw;
     }
 
@@ -162,7 +166,8 @@ public class DrawingView extends View {
         currentDrawing.add(newLine);
         drawOnHiddenBitmap(bitmapCanvas);
         invalidate();
-
+        JSONObject thisObject=newLine.toJSON();
+        System.out.println(thisObject);
     }
 
 }
