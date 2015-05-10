@@ -9,32 +9,22 @@
         android:layout_height="fill_parent"
         android:layout_gravity="bottom">
 
-    </RelativeLayout>
-
-    <fragment
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:name="edu.augustana.javaturtles.sketchsend.DrawFragment"
-        android:id="@+id/main_drawing_fragment"
-        android:layout_gravity="left|top" />
-
-    <GridLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
-        android:columnOrderPreserved="true"
-        android:useDefaultMargins="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layoutMode="clipBounds"
-        android:rowOrderPreserved="true">
+        <fragment
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:name="edu.augustana.javaturtles.sketchsend.DrawFragment"
+            android:id="@+id/main_drawing_fragment"
+            android:layout_gravity="left|top" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="false"
+            android:gravity="bottom">
 
             <ImageButton
                 android:layout_width="120dp"
@@ -75,6 +65,6 @@
                 android:cropToPadding="true"
                 android:layout_weight="1" />
         </LinearLayout>
-    </GridLayout>
+    </RelativeLayout>
 
 </FrameLayout>
