@@ -34,6 +34,7 @@ public class DrawActivity extends ActionBarActivity {
     private int selectedWidth = 10;
     public int selectedColor = Color.BLACK;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +115,9 @@ public class DrawActivity extends ActionBarActivity {
         public void onClick(View v) {
             String serializedDrawing = theDrawingView.createGson();
             System.out.println(serializedDrawing);
+            Intent selectContacts = new Intent(DrawActivity.this, ContactList.class);
+            selectContacts.putExtra("stringToDraw", serializedDrawing);
+            startActivity(selectContacts);
         }
     };
 }

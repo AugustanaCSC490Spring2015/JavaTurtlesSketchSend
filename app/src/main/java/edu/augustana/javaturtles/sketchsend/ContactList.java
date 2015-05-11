@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 
 import com.parse.FindCallback;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -47,6 +48,7 @@ public class ContactList extends ActionBarActivity {
     private ListView contactsListView;
     private int totalContacts;
     private ActionBar myBar;
+    private String serializedDrawing;
 
 
     @Override
@@ -257,12 +259,27 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
         }
 
         if (id== R.id.selected_contacts){
-            List<String> contacts= new ArrayList<String>();
-            contacts = getSelectedContacts();
-            for (int i = 0; i < contacts.size() ; i++){
-                Toast toast = Toast.makeText(getApplicationContext(), contacts.get(i), Toast.LENGTH_SHORT);
-                toast.show();
+            List<ParseObject> individualDrawings = new ArrayList<ParseObject>();
+            Bundle extras = getIntent().getExtras();
+            if(extras != null) {
+                serializedDrawing = extras.getString("stringToDraw");
+                Log.w(TAG, "Has Drawing");
+            } else {
+                serializedDrawing = "";
+                Log.w(TAG, "Null for Drawing");
             }
+            List<String> contacts= getSelectedContacts();
+            // contacts = getSelectedContacts();
+            for (int i = 0; i < contacts.size() ; i++){
+                ParseObject drawing = new ParseObject("Drawings");
+                Log.w(TAG, "for loop tick " + i);
+                drawing.put("fromUser", ParseUser.getCurrentUser().getUsername());
+                drawing.put("toUser", contacts.get(i));
+                drawing.put("drawingString", serializedDrawing);
+                individualDrawings.add(drawing);
+            }
+            ParseObject.saveAllInBackground(individualDrawings);
+
         }
 
         return super.onOptionsItemSelected(item);
