@@ -17,7 +17,6 @@ import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,7 +34,6 @@ public class DrawingView extends View {
     private Point thisDraw;
     private boolean firstPoint=true;
 
-    private List<String> testList;
     private FullSketchObject currentDrawing;
 
     private int lineColor=Color.BLACK;
@@ -55,7 +53,6 @@ public class DrawingView extends View {
         backgroundPaint.setColor(Color.WHITE);
 
         currentDrawing=new FullSketchObject();
-        testList=new ArrayList<String>();
     }
 
     // called when the size changes (and first time, when view is created)
@@ -162,12 +159,6 @@ public class DrawingView extends View {
         drawOnHiddenBitmap(bitmapCanvas);
         invalidate();
         currentDrawing.add(newLine);
-
-        Gson thisObject=new Gson();
-        String testingAgain=thisObject.toJson(currentDrawing);
-        FullSketchObject testSketch=thisObject.fromJson(testingAgain, FullSketchObject.class);
-        System.out.println("This Is the Gson: "+ testingAgain);
-        System.out.println("Testing the color: " + testSketch.getIndexColor());
     }
 
     public String createGson(){

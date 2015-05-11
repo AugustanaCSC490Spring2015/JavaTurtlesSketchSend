@@ -28,5 +28,7 @@ public class FullSketchObject {
 
     public int getSize(){return fullDrawing. size();}
 
-    public int getIndexColor(){return fullDrawing.get(0).getColor();}
+    public int getIndexColor(int i){return fullDrawing.get(i).getColor();}
+
+    public SingleLine getSingleLine(int i){return fullDrawing.get(i);}
 }

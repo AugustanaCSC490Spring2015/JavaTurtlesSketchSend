@@ -18,12 +18,12 @@ import java.util.List;
 public class SingleLine {
     private int color;
     private int width;
-    private ArrayList<Point> pointsOnLine;
+    private LinkedList<Point> pointsOnLine;
 
     public SingleLine(int color, int width, Point start){
         this.color=color;
         this.width=width;
-        pointsOnLine=new ArrayList<>();
+        pointsOnLine=new LinkedList<>();
         pointsOnLine.add(start);
     }
 
@@ -35,7 +35,7 @@ public class SingleLine {
 
     public int getWidth(){return width;}
 
-    public List<Point> getLine(){return pointsOnLine;}
+    public LinkedList<Point> getLine(){return pointsOnLine;}
 
     public int getSize(){return pointsOnLine.size();}
 
