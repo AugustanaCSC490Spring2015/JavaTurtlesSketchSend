@@ -92,7 +92,7 @@ public class InboxList extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent redraw = new Intent(InboxList.this, ReceivedDrawingViewer.class);
-                redraw.putExtra("stringToRedraw", serializedDrawing);
+                redraw.putExtra("stringToRedraw", "");
                 startActivity(redraw);
             }
         };
