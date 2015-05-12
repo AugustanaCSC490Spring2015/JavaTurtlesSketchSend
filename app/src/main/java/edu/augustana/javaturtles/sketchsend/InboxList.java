@@ -76,7 +76,7 @@ public class InboxList extends ActionBarActivity {
 
     public void createInbox(List<ParseObject> fromQuery) {
         List<String> fromUser = new ArrayList<String>();
-        List<String> serializedDrawing = new ArrayList<String>();
+        final List<String> serializedDrawing = new ArrayList<String>();
         for (int i = 0; i < fromQuery.size(); i++) {
             fromUser.add(fromQuery.get(i).getString("fromUser") + " " + i);
             serializedDrawing.add(fromQuery.get(i).getString("drawingString"));
@@ -91,8 +91,8 @@ public class InboxList extends ActionBarActivity {
         inboxOnClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent redraw = new Intent(InboxList.this, ReceivedDrawingViewer.class);
-                redraw.putExtra("stringToRedraw", "");
+                Intent redraw = new Intent(InboxList.this, ReceivedDrawing.class);
+                redraw.putExtra("stringToRedraw", serializedDrawing.get(position));
                 startActivity(redraw);
             }
         };
