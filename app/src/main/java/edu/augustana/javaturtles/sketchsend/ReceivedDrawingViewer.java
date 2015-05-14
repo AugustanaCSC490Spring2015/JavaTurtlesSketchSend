@@ -57,10 +57,6 @@ public class ReceivedDrawingViewer extends View {
         backgroundPaint=new Paint();
         backgroundPaint.setColor(Color.WHITE);
         autoPainter=new Paint();
-
-
-        Gson deserializer=new Gson();
-        receivedDrawing=deserializer.fromJson(serializedDrawing, FullSketchObject.class);
     }
 
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -74,6 +70,11 @@ public class ReceivedDrawingViewer extends View {
         invalidate();
 
         startNextLine(currentLineIndex);
+    }
+
+    public void setDrawingString(String serializedString){
+        Gson deserializer=new Gson();
+        receivedDrawing=deserializer.fromJson(serializedString, FullSketchObject.class);
     }
 
     public void startNextLine(int index){

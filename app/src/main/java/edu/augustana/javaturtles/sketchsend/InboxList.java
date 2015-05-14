@@ -85,17 +85,17 @@ public class InboxList extends ActionBarActivity {
         ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.list_item, fromUser);
         inboxList.setAdapter(adapter);
 
-        AdapterView.OnItemClickListener inboxOnClickListener = null;
-        inboxList.setOnItemClickListener(inboxOnClickListener);
-
-        inboxOnClickListener = new AdapterView.OnItemClickListener() {
+//        AdapterView.OnItemClickListener inboxOnClickListener = null;
+        inboxList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.w(TAG, "Got to Intent");
                 Intent redraw = new Intent(InboxList.this, ReceivedDrawing.class);
                 redraw.putExtra("stringToRedraw", serializedDrawing.get(position));
+                Log.w(TAG,"STARTING REDRAW");
                 startActivity(redraw);
             }
-        };
+        });
         adapter.notifyDataSetChanged();
     }
 

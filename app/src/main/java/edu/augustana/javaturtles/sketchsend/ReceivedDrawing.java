@@ -8,10 +8,20 @@ import android.view.MenuItem;
 
 public class ReceivedDrawing extends ActionBarActivity {
 
+    private ReceivedDrawingViewer theReceivedViewer;
+    public String serializedDrawing;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_received_drawing);
+
+        theReceivedViewer = (ReceivedDrawingViewer) findViewById(R.id.the_drawing_view);
+
+        Bundle bundle = getIntent().getExtras();
+        serializedDrawing = bundle.getString("stringToRedraw");
+
+        theReceivedViewer.setDrawingString(serializedDrawing);
     }
 
 
