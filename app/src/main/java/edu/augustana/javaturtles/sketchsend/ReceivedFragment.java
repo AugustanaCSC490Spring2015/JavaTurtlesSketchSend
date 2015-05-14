@@ -1,7 +1,5 @@
 package edu.augustana.javaturtles.sketchsend;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,7 +8,8 @@ import android.view.ViewGroup;
 
 public class ReceivedFragment extends Fragment {
 
-    private ReceivedDrawingViewer drawingViewer;
+    private ReceivedDrawingViewer theReceivedViewer;
+    private DrawingView drawingView;
     public int test=1;
 
     @Override
@@ -21,7 +20,8 @@ public class ReceivedFragment extends Fragment {
         View view =
                 inflater.inflate(R.layout.fragment_received, container, false);
 
-        drawingViewer = (ReceivedDrawingViewer) view.findViewById(R.id.the_received_viewer);
+        theReceivedViewer = (ReceivedDrawingViewer) view.findViewById(R.id.the_received_viewer);
+
         return view;
     }
 

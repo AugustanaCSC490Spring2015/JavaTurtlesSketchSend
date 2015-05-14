@@ -16,7 +16,7 @@ public class ReceivedDrawing extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_received_drawing);
 
-        theReceivedViewer = (ReceivedDrawingViewer) findViewById(R.id.the_drawing_view);
+        theReceivedViewer = (ReceivedDrawingViewer) findViewById(R.id.the_received_viewer);
 
         Bundle bundle = getIntent().getExtras();
         serializedDrawing = bundle.getString("stringToRedraw");

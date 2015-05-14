@@ -37,6 +37,11 @@ public class SingleLine {
 
     public LinkedList<Point> getLine(){return pointsOnLine;}
 
+    public Point getPoint(){
+        Point point=pointsOnLine.pollFirst();
+        return point;
+    }
+
     public int getSize(){return pointsOnLine.size();}
 
 }
