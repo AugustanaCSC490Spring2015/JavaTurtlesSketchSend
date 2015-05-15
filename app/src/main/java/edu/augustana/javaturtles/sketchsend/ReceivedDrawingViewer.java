@@ -50,9 +50,12 @@ public class ReceivedDrawingViewer extends View {
 
     private int currentColor;
     private int currentWidth;
+    private int currentLineIndex = 0;
+
     private int screenWidth;
     private int screenHeight;
-    private int currentLineIndex = 0;
+    private int senderScreenWidth;
+    private int senderScreenHeight;
 
     private boolean firstPoint = true;
     private boolean stopRecursiveCall;
@@ -78,9 +81,6 @@ public class ReceivedDrawingViewer extends View {
         invalidate();
 
         startNextLine(currentLineIndex);
-        System.out.println(serializedString);
-        currentLine = receivedDrawing.getSingleLine(0);
-        System.out.println(currentLine.getColor() + "   " + currentLine.getWidth() + "    " + currentLine.getSize());
     }
 
     @Override
@@ -95,6 +95,7 @@ public class ReceivedDrawingViewer extends View {
         receivedDrawing = deserializer.fromJson(serializedString, FullSketchObject.class);
         System.out.println(receivedDrawing.getIndexColor(0) + "");
         System.out.println(receivedDrawing.getSize());
+        receivedDrawing.resize(screenWidth,screenHeight);
     }
 
     public void startNextLine(int index) {

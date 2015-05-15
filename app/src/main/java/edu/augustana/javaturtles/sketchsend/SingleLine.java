@@ -27,8 +27,24 @@ public class SingleLine {
         pointsOnLine.add(start);
     }
 
+    public SingleLine(int color, int width, LinkedList<Point> pointsOnLine){
+        this.color=color;
+        this.width=width;
+        this.pointsOnLine=pointsOnLine;
+    }
+
     public void add(Point next){
         pointsOnLine.add(next);
+    }
+
+    public SingleLine resizePoints(double screenScalar){
+        for(int i=0; i<pointsOnLine.size(); i++){
+            Point oldPoint=pointsOnLine.get(i);
+            Point newPoint=new Point((int) (oldPoint.x*screenScalar), (int) (oldPoint.y * screenScalar));
+            pointsOnLine.set(i,newPoint);
+        }
+
+        return new SingleLine(color,width,pointsOnLine);
     }
 
     public int getColor(){return color;}

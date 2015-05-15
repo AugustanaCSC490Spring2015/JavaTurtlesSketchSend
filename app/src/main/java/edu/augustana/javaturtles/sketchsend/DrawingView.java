@@ -51,8 +51,6 @@ public class DrawingView extends View {
 
         backgroundPaint=new Paint();
         backgroundPaint.setColor(Color.WHITE);
-
-        currentDrawing=new FullSketchObject();
     }
 
     // called when the size changes (and first time, when view is created)
@@ -61,6 +59,7 @@ public class DrawingView extends View {
 
         screenWidth = w;
         screenHeight = h;
+        currentDrawing=new FullSketchObject(screenWidth, screenHeight);
         bitmap=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
         bitmapCanvas =new Canvas(bitmap);
         bitmap.eraseColor(Color.WHITE);
@@ -69,7 +68,7 @@ public class DrawingView extends View {
 
     public void clearCanvas(){
         bitmap=Bitmap.createBitmap(screenWidth,screenHeight,Bitmap.Config.ARGB_8888);
-        currentDrawing=new FullSketchObject();
+        currentDrawing=new FullSketchObject(screenWidth, screenHeight);
     }
 
 

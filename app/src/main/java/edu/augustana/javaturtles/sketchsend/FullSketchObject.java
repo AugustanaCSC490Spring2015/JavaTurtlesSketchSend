@@ -7,13 +7,31 @@ import java.util.LinkedList;
  */
 public class FullSketchObject {
     private LinkedList<SingleLine> fullDrawing;
+    private int sentScreenWidth;
+    private int sentScreenHeight;
 
-    public FullSketchObject(){
+    public FullSketchObject(int width, int height){
         fullDrawing=new LinkedList<>();
+        this.sentScreenWidth=width;
+        this.sentScreenHeight=height;
     }
 
     public void add(SingleLine newLineObject){
         fullDrawing.add(newLineObject);
+    }
+
+    public void resize(int receiverWidth, int receiverHeight){
+        double screenScalar=0;
+        if(sentScreenHeight!=0 && sentScreenWidth!=0){
+            double widthRatio=receiverWidth/sentScreenHeight;
+            double heightRatio=receiverHeight/sentScreenHeight;
+            screenScalar=Math.min(widthRatio,heightRatio);
+        }else{
+            screenScalar=1;
+        }
+        for(int i=0; i<fullDrawing.size(); i++){
+            fullDrawing.set(i,fullDrawing.get(i).resizePoints(screenScalar));
+        }
     }
 
     public void undo(){
@@ -29,6 +47,10 @@ public class FullSketchObject {
     public int getSize(){return fullDrawing. size();}
 
     public int getIndexColor(int i){return fullDrawing.get(i).getColor();}
+
+    public int getSentScreenWidth(){return sentScreenWidth;}
+
+    public int getSentScreenHeight(){return sentScreenHeight;}
 
     public SingleLine getSingleLine(int i){return fullDrawing.get(i);}
 }
