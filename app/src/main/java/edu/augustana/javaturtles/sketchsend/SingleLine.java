@@ -39,6 +39,9 @@ public class SingleLine {
 
     public SingleLine resizeLine(double screenScalar){
         width=(int) (width*screenScalar);
+        if(width<2){
+            width=2;
+        }
         for(int i=0; i<pointsOnLine.size(); i++){
             Point oldPoint=pointsOnLine.get(i);
             Point newPoint=new Point((int) (oldPoint.x*screenScalar), (int) (oldPoint.y * screenScalar));
