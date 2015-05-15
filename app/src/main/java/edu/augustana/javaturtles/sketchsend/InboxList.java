@@ -1,5 +1,7 @@
 package edu.augustana.javaturtles.sketchsend;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -27,7 +29,6 @@ import java.util.List;
 
 
 
-
 public class InboxList extends ActionBarActivity {
 
     private static final String TAG = "Inbox";
@@ -40,21 +41,8 @@ public class InboxList extends ActionBarActivity {
 
         myBar = getSupportActionBar();
         myBar.setTitle("");
-
-        final ParseQuery<ParseObject> query = ParseQuery.getQuery("Drawings");
-        query.whereEqualTo("toUser", ParseUser.getCurrentUser().getUsername());
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
-                if (e == null) {
-                   createInbox(parseObjects);
-                } else {
-                    Log.d("Inbox", "Error:");
-                }
-            }
-        });
-
-
+        
+        queryParse();
     }
 
 
@@ -80,13 +68,31 @@ public class InboxList extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void queryParse() {
+        final ParseQuery<ParseObject> query = ParseQuery.getQuery("Drawings");
+        query.whereEqualTo("toUser", ParseUser.getCurrentUser().getUsername());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                if (e == null) {
+                    createInbox(parseObjects);
+                } else {
+                    Log.d("Inbox", "Error:");
+                }
+            }
+        });
+
+    }
+
     public void createInbox(List<ParseObject> queryResults) {
+        final List<ParseObject> copyOfQueryResults = queryResults;
+
         List<String> fromUsers = new ArrayList<String>();
         List<String> timeStamps = new ArrayList<String>();
         String combinedToAdd;
-        List<String> combinedToDisplay = new ArrayList<String>();
+        final List<String> combinedToDisplay = new ArrayList<String>();
         final List<String> serializedDrawing = new ArrayList<String>();
-        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd-HH:mm");
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd HH:mm");
         for (ParseObject drawing:queryResults) {
             fromUsers.add(drawing.getString("fromUser"));
             Date dateToFormat = drawing.getCreatedAt();
@@ -95,7 +101,7 @@ public class InboxList extends ActionBarActivity {
             serializedDrawing.add(drawing.getString("drawingString"));
         }
         for (int i = 0; i < fromUsers.size(); i++) {
-            combinedToAdd = fromUsers.get(i) + " " + timeStamps.get(i);
+            combinedToAdd = fromUsers.get(i) + "   " + timeStamps.get(i);
             Log.w(TAG, fromUsers.get(i) + "   " + (timeStamps.get(i)));
             combinedToDisplay.add(combinedToAdd);
         }
@@ -103,7 +109,6 @@ public class InboxList extends ActionBarActivity {
         ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.inbox_item, combinedToDisplay);
         inboxList.setAdapter(adapter);
 
-//        AdapterView.OnItemClickListener inboxOnClickListener = null;
         inboxList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -112,6 +117,40 @@ public class InboxList extends ActionBarActivity {
                 redraw.putExtra("stringToRedraw", serializedDrawing.get(position));
                 Log.w(TAG,"STARTING REDRAW");
                 startActivity(redraw);
+            }
+        });
+        inboxList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final int copyOfPosition = position;
+                AlertDialog.Builder builder = new AlertDialog.Builder(InboxList.this);
+
+                builder.setMessage("Do you want to delete this drawing?");
+
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            // called when "Cancel" Button is clicked
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel(); // dismiss dialog
+                            }
+                        }
+                );
+
+                builder.setPositiveButton("Delete",
+                        new DialogInterface.OnClickListener()
+                        {
+                            // called when "Delete" Button is clicked
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                ParseObject parseObjectToDelete = copyOfQueryResults.get(copyOfPosition);
+                                parseObjectToDelete.deleteInBackground();
+                                serializedDrawing.remove(copyOfPosition);
+                                combinedToDisplay.remove(copyOfPosition);
+                                queryParse();
+                            }
+                        } // end OnClickListener
+                );builder.show();
+
+                return true;
             }
         });
         adapter.notifyDataSetChanged();
