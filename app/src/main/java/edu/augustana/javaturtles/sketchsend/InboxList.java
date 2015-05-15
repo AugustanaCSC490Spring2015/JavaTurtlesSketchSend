@@ -19,7 +19,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE;
@@ -74,15 +76,27 @@ public class InboxList extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void createInbox(List<ParseObject> fromQuery) {
-        List<String> fromUser = new ArrayList<String>();
+    public void createInbox(List<ParseObject> queryResults) {
+        List<String> fromUsers = new ArrayList<String>();
+        List<String> timeStamps = new ArrayList<String>();
+        String combinedToAdd;
+        List<String> combinedToDisplay = new ArrayList<String>();
         final List<String> serializedDrawing = new ArrayList<String>();
-        for (int i = 0; i < fromQuery.size(); i++) {
-            fromUser.add(fromQuery.get(i).getString("fromUser") + " " + i);
-            serializedDrawing.add(fromQuery.get(i).getString("drawingString"));
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd HH:mm");
+        for (ParseObject drawing:queryResults) {
+            fromUsers.add(drawing.getString("fromUser"));
+            Date dateToFormat = drawing.getCreatedAt();
+            String formattedDate = DATE_FORMAT.format(dateToFormat);
+            timeStamps.add(formattedDate);
+            serializedDrawing.add(drawing.getString("drawingString"));
+        }
+        for (int i = 0; i < fromUsers.size(); i++) {
+            combinedToAdd = fromUsers.get(i) + " " + timeStamps.get(i);
+            Log.w(TAG, fromUsers.get(i) + "   " + (timeStamps.get(i)));
+            combinedToDisplay.add(combinedToAdd);
         }
         ListView inboxList = (ListView) findViewById(R.id.inboxList);
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.list_item, fromUser);
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.list_item, combinedToDisplay);
         inboxList.setAdapter(adapter);
 
 //        AdapterView.OnItemClickListener inboxOnClickListener = null;
