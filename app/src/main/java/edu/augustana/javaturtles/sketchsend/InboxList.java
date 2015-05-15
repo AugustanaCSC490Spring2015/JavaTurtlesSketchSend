@@ -82,7 +82,7 @@ public class InboxList extends ActionBarActivity {
         String combinedToAdd;
         List<String> combinedToDisplay = new ArrayList<String>();
         final List<String> serializedDrawing = new ArrayList<String>();
-        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd HH:mm");
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd-HH:mm");
         for (ParseObject drawing:queryResults) {
             fromUsers.add(drawing.getString("fromUser"));
             Date dateToFormat = drawing.getCreatedAt();
