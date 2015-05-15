@@ -57,7 +57,7 @@ public class ContactList extends ActionBarActivity {
         setContentView(R.layout.activity_contact_list);
 
         myBar = getSupportActionBar();
-        myBar.setTitle("");
+        myBar.setTitle("Your Contacts");
 
         contactsList = new ArrayList<String>();
         contactsListView = (ListView) findViewById(R.id.contactsListView);
