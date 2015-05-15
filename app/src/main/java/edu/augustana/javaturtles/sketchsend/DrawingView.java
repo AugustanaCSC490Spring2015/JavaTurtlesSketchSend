@@ -86,9 +86,11 @@ public class DrawingView extends View {
         }else if(colorSelected==4){
             lineColor=Color.BLUE;
         }else if(colorSelected==5){
-            lineColor=Color.rgb(255,0,175);
+            lineColor=Color.rgb(104,38,165);
         }else if(colorSelected==6){
             lineColor=Color.BLACK;
+        }else if(colorSelected==7) {
+            lineColor=Color.rgb(83,36,21);
         }else{
             lineColor=Color.WHITE;
         }
