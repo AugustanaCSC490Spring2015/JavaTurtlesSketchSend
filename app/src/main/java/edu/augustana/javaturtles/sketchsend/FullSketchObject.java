@@ -33,8 +33,7 @@ public class FullSketchObject {
         }
         Log.w("FULL SKETCH OBJECT", "Sender w: "+sentScreenWidth+" Sender h: "+sentScreenHeight +" Receiver w: "+receiverWidth+" Receiver h: "+receiverHeight + " ScreenScalar: "+ screenScalar);
         for(int i=0; i<fullDrawing.size(); i++){
-            Log.w("FULL SKETCH OBJECT", "Resizing the line loop");
-            fullDrawing.set(i,fullDrawing.get(i).resizePoints(screenScalar));
+            fullDrawing.set(i,fullDrawing.get(i).resizeLine(screenScalar));
         }
     }
 
