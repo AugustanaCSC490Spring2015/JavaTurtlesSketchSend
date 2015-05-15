@@ -22,7 +22,7 @@ public class FullSketchObject {
         fullDrawing.add(newLineObject);
     }
 
-    public void resize(int receiverWidth, int receiverHeight){
+    public void resize(double receiverWidth, double receiverHeight){
         double screenScalar=0;
         if(sentScreenHeight!=0 && sentScreenWidth!=0){
             double widthRatio=receiverWidth/sentScreenHeight;
