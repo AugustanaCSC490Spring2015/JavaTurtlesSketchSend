@@ -13,12 +13,12 @@
         android:textSize="25dp" />
 
     <SeekBar
-        android:layout_width="342dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/widthSeekBar"
         android:layout_gravity="center_horizontal"
         android:progress="9"
-        android:max="24" />
+        android:max="49" />
 
     <LinearLayout
         android:orientation="horizontal"
