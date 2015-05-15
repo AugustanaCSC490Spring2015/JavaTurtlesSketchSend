@@ -1,6 +1,7 @@
 package edu.augustana.javaturtles.sketchsend;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,18 +25,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE;
+
 
 
 public class InboxList extends ActionBarActivity {
 
     private static final String TAG = "Inbox";
-
+    private ActionBar myBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox_list);
+
+        myBar = getSupportActionBar();
+        myBar.setTitle("");
 
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Drawings");
         query.whereEqualTo("toUser", ParseUser.getCurrentUser().getUsername());
@@ -96,7 +100,7 @@ public class InboxList extends ActionBarActivity {
             combinedToDisplay.add(combinedToAdd);
         }
         ListView inboxList = (ListView) findViewById(R.id.inboxList);
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.list_item, combinedToDisplay);
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.inbox_item, combinedToDisplay);
         inboxList.setAdapter(adapter);
 
 //        AdapterView.OnItemClickListener inboxOnClickListener = null;
