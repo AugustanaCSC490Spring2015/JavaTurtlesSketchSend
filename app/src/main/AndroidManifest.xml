@@ -33,6 +33,7 @@
         </activity>
         <activity
             android:name=".DrawActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_draw" >
         </activity>
         <activity

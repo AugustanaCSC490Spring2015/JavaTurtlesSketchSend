@@ -13,12 +13,12 @@
         android:textSize="25dp" />
 
     <SeekBar
-        android:layout_width="342dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/widthSeekBar"
         android:layout_gravity="center_horizontal"
-        android:progress="9"
-        android:max="24" />
+        android:progress="19"
+        android:max="49" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10"
+            android:text="20"
             android:id="@+id/custom_width"
             android:textColor="#ff000000"
             android:textSize="25dp"

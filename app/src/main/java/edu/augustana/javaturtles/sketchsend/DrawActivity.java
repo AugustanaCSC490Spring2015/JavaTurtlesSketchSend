@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,14 +32,18 @@ public class DrawActivity extends ActionBarActivity {
     private TextView customWidth;
     private DrawingView theDrawingView;
 
-    private int selectedWidth = 10;
+    private int selectedWidth = 20;
     public int selectedColor = Color.BLACK;
+    private ActionBar myBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
+
+        myBar = getSupportActionBar();
+        myBar.setTitle("Sketch!");
 
         theDrawingView = (DrawingView) findViewById(R.id.the_drawing_view);
         Log.w("DRAW_ACTIVITY", "drawing view = " + theDrawingView);
@@ -83,13 +88,14 @@ public class DrawActivity extends ActionBarActivity {
             View dialogCustomView = inflater.inflate(R.layout.width_select_view, null);
             builder.setView(dialogCustomView);
             customWidth = (TextView)dialogCustomView.findViewById(R.id.custom_width);
-            selectedWidth=10;
-            SeekBar widthSeekBar = (SeekBar)dialogCustomView.findViewById(R.id.widthSeekBar);
+            final SeekBar widthSeekBar = (SeekBar)dialogCustomView.findViewById(R.id.widthSeekBar);
+            widthSeekBar.setProgress(selectedWidth);
+            customWidth.setText("" + selectedWidth);
             widthSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     selectedWidth = progress + 1;
-                    customWidth.setText(""+selectedWidth);
+                    customWidth.setText("" + selectedWidth);
                 }
 
                 @Override
@@ -98,7 +104,8 @@ public class DrawActivity extends ActionBarActivity {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                }});
+                }
+            });
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
