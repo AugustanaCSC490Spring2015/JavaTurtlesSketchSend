@@ -95,7 +95,9 @@ public class ReceivedDrawingViewer extends View {
         receivedDrawing = deserializer.fromJson(serializedString, FullSketchObject.class);
         System.out.println(receivedDrawing.getIndexColor(0) + "");
         System.out.println(receivedDrawing.getSize());
+        Log.w(TAG, receivedDrawing.getSingleLine(0).getPoint(10).x+"    ");
         receivedDrawing.resize(screenWidth,screenHeight);
+        Log.w(TAG, receivedDrawing.getSingleLine(0).getPoint(10).x+"    ");
     }
 
     public void startNextLine(int index) {

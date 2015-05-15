@@ -58,6 +58,10 @@ public class SingleLine {
         return point;
     }
 
+    public Point getPoint(int index){
+        return pointsOnLine.get(index);
+    }
+
     public int getSize(){return pointsOnLine.size();}
 
 }
