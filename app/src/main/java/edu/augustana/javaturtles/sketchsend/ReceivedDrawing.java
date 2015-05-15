@@ -15,9 +15,6 @@ public class ReceivedDrawing extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_received_drawing);
 
-        ActionBar myBar = getSupportActionBar();
-        myBar.hide();
-
         theReceivedViewer = (ReceivedDrawingViewer) findViewById(R.id.the_received_viewer);
 
         Bundle bundle = getIntent().getExtras();

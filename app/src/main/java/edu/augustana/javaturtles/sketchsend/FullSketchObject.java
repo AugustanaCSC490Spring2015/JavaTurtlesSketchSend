@@ -25,7 +25,7 @@ public class FullSketchObject {
     public void resize(double receiverWidth, double receiverHeight){
         double screenScalar=0;
         if(sentScreenHeight!=0 && sentScreenWidth!=0){
-            double widthRatio=receiverWidth/sentScreenHeight;
+            double widthRatio=receiverWidth/sentScreenWidth;
             double heightRatio=receiverHeight/sentScreenHeight;
             screenScalar=Math.min(widthRatio,heightRatio);
         }else{
