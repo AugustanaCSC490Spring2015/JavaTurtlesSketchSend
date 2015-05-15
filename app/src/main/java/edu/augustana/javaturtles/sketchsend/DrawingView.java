@@ -37,7 +37,7 @@ public class DrawingView extends View {
     private FullSketchObject currentDrawing;
 
     private int lineColor=Color.BLACK;
-    private int lineWidth=10;
+    private int lineWidth=20;
     private int circleRadius;
     private int screenWidth;
     private int screenHeight;
