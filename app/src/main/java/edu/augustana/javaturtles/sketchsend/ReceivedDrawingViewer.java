@@ -9,23 +9,13 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-
 import com.google.gson.Gson;
-
-
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Timer;
-import java.util.TimerTask;
 
-/**
- * Created by logankruse11 on 5/8/2015.
- */
 public class ReceivedDrawingViewer extends View {
 
-    private static final String TAG = "SketchSendView"; // for Log.w(TAG, ...)
+    private static final String TAG = "SketchSendView";
 
     private Activity receivedDrawingActivity; // keep a reference to the main Activity
 
@@ -34,8 +24,6 @@ public class ReceivedDrawingViewer extends View {
     private Canvas bitmapCanvas;
     private Paint autoPainter;
 
-    private TimerTask drawTask;
-    private Timer timer = new Timer();
     private Handler handler = new Handler();
     private Runnable r;
     private FullSketchObject receivedDrawing;
@@ -54,13 +42,13 @@ public class ReceivedDrawingViewer extends View {
 
     private int screenWidth;
     private int screenHeight;
-    private int senderScreenWidth;
-    private int senderScreenHeight;
 
     private boolean firstPoint = true;
     private boolean stopRecursiveCall;
 
-
+/*
+    Constructor that sets up the canvas
+ */
     public ReceivedDrawingViewer(Context context, AttributeSet atts) {
         super(context, atts);
         receivedDrawingActivity = (Activity) context;
@@ -69,7 +57,9 @@ public class ReceivedDrawingViewer extends View {
         backgroundPaint.setColor(Color.WHITE);
         autoPainter = new Paint();
     }
-
+/*
+    Checks scales the drawing for different devices
+ */
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
@@ -79,9 +69,7 @@ public class ReceivedDrawingViewer extends View {
         bitmapCanvas = new Canvas(bitmap);
         bitmap.eraseColor(Color.WHITE);
         invalidate();
-        Log.w(TAG, receivedDrawing.getSingleLine(0).getPoint(10).x+"    ");
         receivedDrawing.resize(screenWidth,screenHeight);
-        Log.w(TAG, receivedDrawing.getSingleLine(0).getPoint(10).x+"    ");
 
         startNextLine(currentLineIndex);
     }
@@ -91,7 +79,10 @@ public class ReceivedDrawingViewer extends View {
         // drawOnHiddenBitmap the background screen
         canvas.drawBitmap(bitmap, 0, 0, backgroundPaint);
     }
-
+/*
+    Takes in the serialized String and deserializes it into a FullSketchObject
+    to be drawn
+ */
     public void setDrawingString(String serializedString) {
         this.serializedString = serializedString;
         Gson deserializer = new Gson();
@@ -99,7 +90,9 @@ public class ReceivedDrawingViewer extends View {
         System.out.println(receivedDrawing.getIndexColor(0) + "");
         System.out.println(receivedDrawing.getSize());
     }
-
+/*
+    Checks for new color or width and moves to the next line
+ */
     public void startNextLine(int index) {
         currentLine = receivedDrawing.getSingleLine(index);
         lineList = currentLine.getLine();
@@ -110,24 +103,23 @@ public class ReceivedDrawingViewer extends View {
         stopRecursiveCall=false;
         repeatAnim();
     }
-
+/*
+    Takes in a boolean parameter to see if the recursion should stop
+ */
     public void setStopRecursiveCall(Boolean recursiveCall){
         this.stopRecursiveCall=recursiveCall;
     }
-
+/*
+    Draws a particular line segment.
+ */
     public void drawSegment() {
-        Log.w(TAG, "Draw Segment Call");
         if (firstPoint) {
             lastPoint = currentLine.getPoint();
-            Log.w(TAG, lastPoint.x + "/" + lastPoint.y);
             bitmapCanvas.drawCircle(lastPoint.x, lastPoint.y, currentWidth / 2, autoPainter);
             firstPoint = false;
-            Log.w(TAG, currentLine.getSize()+"");
             invalidate();
         } else if (currentLine.getSize() > 0) {
-            Log.w(TAG, "Starting the second point");
             thisPoint = currentLine.getPoint();
-            Log.w(TAG, thisPoint.x+"/"+thisPoint.y);
             bitmapCanvas.drawLine(lastPoint.x, lastPoint.y, thisPoint.x, thisPoint.y, autoPainter);
             bitmapCanvas.drawCircle(thisPoint.x, thisPoint.y, currentWidth / 2, autoPainter);
             lastPoint = thisPoint;
@@ -135,13 +127,10 @@ public class ReceivedDrawingViewer extends View {
         } else {
             currentLineIndex++;
             if(receivedDrawing.getSize()<=currentLineIndex){
-                Log.w(TAG, "REMOVING CALLBACKS");
                 stopRecursiveCall=true;
                 handler.removeCallbacks(null);
                 handler.removeCallbacksAndMessages(r);
-                Log.w(TAG, "REMOVED CALLBACKS");
             }else{
-                Log.w(TAG, "CONTINUE LINE");
                 firstPoint=true;
                 startNextLine(currentLineIndex);
             }
@@ -149,21 +138,12 @@ public class ReceivedDrawingViewer extends View {
     }
 
     //Code from http://stackoverflow.com/questions/18788067/repeating-animation-with-timer
-
-    //FIX THE TIMAH
-
-    //Need to do more research on timers to figure out how to do animations
+    //Checks if the recursive call needs to continue and draws the next segment
     public void repeatAnim() {
-
-//        drawTask = new TimerTask() {
-//            @Override
-//            public void run() {
                  r= new Runnable() {
                     @Override
                     public void run() {
-                        Log.w(TAG, "handler running");
                             drawSegment();
-                        Log.w(TAG, "return from call");
                         if(!stopRecursiveCall) {
                             handler.postDelayed(r, 75);
                         }
@@ -172,8 +152,5 @@ public class ReceivedDrawingViewer extends View {
             handler.postDelayed(r,1000);
             }
         }
-
-//        timer.schedule(drawTask, 3000, 250);
-//    }
 
 

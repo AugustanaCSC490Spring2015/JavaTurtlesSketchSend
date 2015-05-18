@@ -1,6 +1,5 @@
 package edu.augustana.javaturtles.sketchsend;
 
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 
@@ -9,7 +8,8 @@ public class ReceivedDrawing extends ActionBarActivity {
 
     private ReceivedDrawingViewer theReceivedViewer;
     public String serializedDrawing;
-
+//Catches intent extra that contains the stringToRedraw and calls the setDrawingString
+    //to pass it into RecievedDrawingViewer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -8,10 +8,7 @@ import android.view.ViewGroup;
 
 public class ReceivedFragment extends Fragment {
 
-    private ReceivedDrawingViewer theReceivedViewer;
-    private DrawingView drawingView;
-    public int test=1;
-
+    //Inflates received_viewer
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -19,9 +16,6 @@ public class ReceivedFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view =
                 inflater.inflate(R.layout.fragment_received, container, false);
-
-        theReceivedViewer = (ReceivedDrawingViewer) view.findViewById(R.id.the_received_viewer);
-
         return view;
     }
 

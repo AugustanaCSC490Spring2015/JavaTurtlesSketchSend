@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -49,22 +47,11 @@ public class InboxList extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_inbox_list, menu);
         return true;
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.switch_user) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
+/*
+   Queries Parse.com to find any entries that contain a toUser field
+   equal to the currentUser.  When hte query is finished it calls createInbox
+   passing in the query results in the form of List<ParseObjects>
+ */
     public void queryParse() {
         final ParseQuery<ParseObject> query = ParseQuery.getQuery("Drawings");
         query.whereEqualTo("toUser", ParseUser.getCurrentUser().getUsername());
@@ -74,13 +61,18 @@ public class InboxList extends ActionBarActivity {
                 if (e == null) {
                     createInbox(parseObjects);
                 } else {
-                    Log.d("Inbox", "Error:");
                 }
             }
         });
 
     }
+/*
+    Takes the List<ParseObjects> as a parameter and uses those objects to
+    create the data to be viewed by the receiver.  It then updates the ListView
+    with the data and stores the serialized String (drawing) in another ArrayList
+    with the same index as the User and timestamp information.
 
+ */
     public void createInbox(List<ParseObject> queryResults) {
         final List<ParseObject> copyOfQueryResults = queryResults;
 
@@ -97,23 +89,24 @@ public class InboxList extends ActionBarActivity {
             serializedDrawing.add(drawing.getString("drawingString"));
         }
         for (int i = 0; i < fromUsers.size(); i++) {
-            Log.w(TAG, fromUsers.get(i) + "   " + (timeStamps.get(i)));
             combinedToDisplay.add("From: " + fromUsers.get(i) + "   Received: " + timeStamps.get(i));
         }
         ListView inboxList = (ListView) findViewById(R.id.inboxList);
         ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.inbox_item, combinedToDisplay);
         inboxList.setAdapter(adapter);
 
+        //OnItemClickListener launches intent to draw the received image in ReceivedDrawing
         inboxList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.w(TAG, "Got to Intent");
                 Intent redraw = new Intent(InboxList.this, ReceivedDrawing.class);
                 redraw.putExtra("stringToRedraw", serializedDrawing.get(position));
-                Log.w(TAG,"STARTING REDRAW");
                 startActivity(redraw);
             }
         });
+        //OnItemLingClickListener prompts user to delete drawing.  They can either delete
+        //the drawing which will delete it on Parse.com and requery Parse.com to update
+        //the ListView
         inboxList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

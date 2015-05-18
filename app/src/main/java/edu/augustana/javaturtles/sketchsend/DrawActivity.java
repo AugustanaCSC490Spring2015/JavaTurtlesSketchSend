@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class DrawActivity extends ActionBarActivity {
@@ -113,11 +114,15 @@ public class DrawActivity extends ActionBarActivity {
         @Override
         public void onClick(View v) {
             String serializedDrawing = theDrawingView.createGson();
-            System.out.println(serializedDrawing);
-            Intent selectContacts = new Intent(DrawActivity.this, ContactList.class);
-            selectContacts.putExtra("stringToDraw", serializedDrawing);
-            selectContacts.putExtra("setSendVisible", true);
-            startActivity(selectContacts);
+            if(serializedDrawing.contains("x")) {
+                Intent selectContacts = new Intent(DrawActivity.this, ContactList.class);
+                selectContacts.putExtra("stringToDraw", serializedDrawing);
+                selectContacts.putExtra("setSendVisible", true);
+                startActivity(selectContacts);
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(), "Draw a Picture You Fool!", Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
     };
 }
