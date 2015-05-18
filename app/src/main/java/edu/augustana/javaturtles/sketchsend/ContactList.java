@@ -105,9 +105,11 @@ public class ContactList extends ActionBarActivity {
                 individualDrawings.add(drawing);
             }
             ParseObject.saveAllInBackground(individualDrawings);
-            Intent toMainMenu = new Intent(ContactList.this, MainMenu.class);
-            finish();
-            startActivity(toMainMenu);
+
+            Intent intent = new Intent(getApplicationContext(), MainMenu.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
         }
     };
 
