@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,26 +51,31 @@ public class MainMenu extends ActionBarActivity {
         contactsButton = (ImageButton) findViewById(R.id.contactsButton);
         contactsButton.setOnClickListener(contactsButtonHandler);
 
+        //gets current user from Parse
         currentUser = ParseUser.getCurrentUser();
+        //if current user already exists, welcomes them back
         if (currentUser != null) {
             Toast toast = Toast.makeText(getApplicationContext(), "Welcome back " + currentUser.getUsername(), Toast.LENGTH_SHORT);
             toast.show();
 
-        } else {
+        } else {        //have user log in
             logIn();
         }
     }
 
+    /*
+    -Build alert dialog for user to input 'new user' information
+    -name
+    -email
+    -password
+     */
     public void createNewUser() {
-        Log.w(TAG, "Create New User Call");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         builder.setTitle("Create User");
         builder.setMessage("Please enter your Information");
         View dialogCustomView = inflater.inflate(R.layout.three_options_view, null);
         builder.setView(dialogCustomView);
-        //Code that requires API 21 or higher
-        //builder.setView(R.layout.three_options_view);
         final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText3);
         final EditText email = (EditText) dialogCustomView.findViewById(R.id.EmailEditText3);
         final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText3);
@@ -79,23 +83,26 @@ public class MainMenu extends ActionBarActivity {
         builder.setPositiveButton("Create Account", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //checks to make sure they entered
                 if(password.getText().toString().length() == 0) {
                     Toast toast = Toast.makeText(getApplicationContext(), "You must enter a password", Toast.LENGTH_SHORT);
                     toast.show();
                     createNewUser();
                 }
+                //creates parse user object and sets all the fields for it
                 currentUser = new ParseUser();
                 currentUser.setUsername(username.getText().toString());
                 currentUser.setEmail(email.getText().toString());
                 currentUser.setPassword(password.getText().toString());
 
+                //creates contact arraylist to associate with this user
+                //adds user to their own contact list
                 List<String> contactsList = new ArrayList<String>();
                 contactsList.add(username.getText().toString());
                 Gson contactsGson = new Gson();
                 String serializedContacts = contactsGson.toJson(contactsList);
 
                 currentUser.put("contactList", serializedContacts);
-                Log.w(TAG, "Credentials from createNewUser(): Username = " + currentUser.getUsername() + "Email = " + currentUser.getEmail());
                 finishSignIn();
             }
         });
@@ -104,6 +111,11 @@ public class MainMenu extends ActionBarActivity {
 
     }
 
+    /*
+    -Creates alert dialog for user to log in
+    -enter their username and password
+    -if they don't already have an account, can go to createUser() method
+     */
     private void logIn() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -117,6 +129,7 @@ public class MainMenu extends ActionBarActivity {
         builder.setPositiveButton("Log In", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //try to log in with info, if wrong credentials, recall logIn()
                 try {
                     ParseUser.logIn(username.getText().toString(), password.getText().toString());
                     currentUser = ParseUser.getCurrentUser();
@@ -129,6 +142,7 @@ public class MainMenu extends ActionBarActivity {
                 }
             }
         });
+        //allows user to create new account if they don't have one already
         builder.setNegativeButton("Create Account", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -138,8 +152,12 @@ public class MainMenu extends ActionBarActivity {
         builder.setCancelable(false);
         builder.show();
     }
+
+    /*
+    -Welcomes new user if their credentials are OK
+    -If not, calls createNewUser
+     */
     private void finishSignIn() {
-        Log.w(TAG, "Credentials from onCreate(): Username = " + currentUser.getUsername() + "Email = " + currentUser.getEmail());
         Toast toast = Toast.makeText(getApplicationContext(), "Please wait while we check those credentials", Toast.LENGTH_SHORT);
         toast.show();
         currentUser.signUpInBackground(new SignUpCallback() {
@@ -149,7 +167,6 @@ public class MainMenu extends ActionBarActivity {
                     Toast toast = Toast.makeText(getApplicationContext(), "Welcome, " + currentUser.getUsername(), Toast.LENGTH_SHORT);
                     toast.show();
                 } else {
-                    Log.w(TAG, "" + e.getMessage());
                     Toast toast = Toast.makeText(getApplicationContext(), "Invalid Combination of Credentials.  Please Try Again", Toast.LENGTH_SHORT);
                     toast.show();
                     createNewUser();
@@ -195,6 +212,10 @@ public class MainMenu extends ActionBarActivity {
         return true;
     }
 
+    /*
+    Allows user to Log out, which then calls logIn
+    Also allows user to create a new account
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
