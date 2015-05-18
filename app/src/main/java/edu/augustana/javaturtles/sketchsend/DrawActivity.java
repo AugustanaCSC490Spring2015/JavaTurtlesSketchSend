@@ -1,24 +1,17 @@
 package edu.augustana.javaturtles.sketchsend;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.parse.ParseUser;
 
 
 public class DrawActivity extends ActionBarActivity {
@@ -46,9 +39,8 @@ public class DrawActivity extends ActionBarActivity {
         myBar.setTitle("Sketch!");
 
         theDrawingView = (DrawingView) findViewById(R.id.the_drawing_view);
-        Log.w("DRAW_ACTIVITY", "drawing view = " + theDrawingView);
 
-
+        //create and attach listeners to image buttons
         colorSelect = (ImageButton) findViewById(R.id.colorButton);
         colorSelect.setOnClickListener(colorSelectHandler);
 
@@ -61,16 +53,15 @@ public class DrawActivity extends ActionBarActivity {
 
     }
 
+    //Create on click listener to launch color pick dialog
     View.OnClickListener colorSelectHandler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.w(TAG, "Create Color Call");
             AlertDialog.Builder builder = new AlertDialog.Builder(DrawActivity.this);
             builder.setTitle(R.string.color_selector)
                     .setItems(R.array.colors_array, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             selectedColor = which;
-                            Log.w(TAG, which+"");
                             theDrawingView.setColorSelected(selectedColor);
                         }
                     })
@@ -78,10 +69,10 @@ public class DrawActivity extends ActionBarActivity {
         }
     };
 
+    //Create on click listener to launch width pick dialog
     View.OnClickListener widthSelectHandler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.w(TAG, "Create New User Call");
             AlertDialog.Builder builder = new AlertDialog.Builder(DrawActivity.this);
             LayoutInflater inflater = DrawActivity.this.getLayoutInflater();
             builder.setTitle("Width Selector");
@@ -117,6 +108,7 @@ public class DrawActivity extends ActionBarActivity {
         }
     };
 
+    //Create on click listener to send serialized string to contacts list to be sent
     View.OnClickListener sendSketchHandler = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

@@ -12,12 +12,14 @@ public class FullSketchObject {
     private int sentScreenWidth;
     private int sentScreenHeight;
 
+    //Constructor for a new FullSketchObject
     public FullSketchObject(int width, int height){
         fullDrawing=new LinkedList<>();
         this.sentScreenWidth=width;
         this.sentScreenHeight=height;
     }
 
+    // Adds a line to the full drawing linked list
     public void add(SingleLine newLineObject){
         fullDrawing.add(newLineObject);
     }
@@ -37,23 +39,12 @@ public class FullSketchObject {
         }
     }
 
-    public void undo(){
-        fullDrawing.remove();
-    }
-
-    public void clear(){
-        fullDrawing.clear();
-    }
-
-    public LinkedList<SingleLine> getFullDrawing(){return fullDrawing;}
-
+    // Returns the size of the drawing list
     public int getSize(){return fullDrawing. size();}
 
+    //returns the color of the line at index i
     public int getIndexColor(int i){return fullDrawing.get(i).getColor();}
 
-    public int getSentScreenWidth(){return sentScreenWidth;}
-
-    public int getSentScreenHeight(){return sentScreenHeight;}
-
+    //returns the line at index i
     public SingleLine getSingleLine(int i){return fullDrawing.get(i);}
 }
