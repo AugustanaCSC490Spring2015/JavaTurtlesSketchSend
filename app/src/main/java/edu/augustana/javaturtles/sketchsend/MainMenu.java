@@ -11,23 +11,23 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainMenu extends ActionBarActivity {
 
     private final String TAG = "SketchSend";
 
-    private ArrayList<String> userCredentials;
     private ImageButton sketchButton;
     private ImageButton inboxButton;
     private ImageButton contactsButton;
@@ -58,14 +58,8 @@ public class MainMenu extends ActionBarActivity {
             toast.show();
 
         } else {
-            //make buttons unclickable until after SignUpCallback
             logIn();
         }
-//        //do something on Parse.com
-//        ParseObject testObject = new ParseObject("TestObject");
-//        testObject.put("foo", "bar");
-//        testObject.saveInBackground();
-
     }
 
     public void createNewUser() {
@@ -94,6 +88,13 @@ public class MainMenu extends ActionBarActivity {
                 currentUser.setUsername(username.getText().toString());
                 currentUser.setEmail(email.getText().toString());
                 currentUser.setPassword(password.getText().toString());
+
+                List<String> contactsList = new ArrayList<String>();
+                contactsList.add(username.getText().toString());
+                Gson contactsGson = new Gson();
+                String serializedContacts = contactsGson.toJson(contactsList);
+
+                currentUser.put("contactList", serializedContacts);
                 Log.w(TAG, "Credentials from createNewUser(): Username = " + currentUser.getUsername() + "Email = " + currentUser.getEmail());
                 finishSignIn();
             }
@@ -110,8 +111,6 @@ public class MainMenu extends ActionBarActivity {
         builder.setMessage("Please enter your Login Information");
         View dialogCustomView = inflater.inflate(R.layout.two_options_view, null);
         builder.setView(dialogCustomView);
-        //Code that requires API 21 or higher
-        //builder.setView(R.layout.three_options_view);
         final EditText username = (EditText) dialogCustomView.findViewById(R.id.UsernameEditText2);
         final EditText password = (EditText) dialogCustomView.findViewById(R.id.PasswordEditText2);
         //In case it gives you an error for setView(View) try

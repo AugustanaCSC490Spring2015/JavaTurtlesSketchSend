@@ -2,9 +2,7 @@ package edu.augustana.javaturtles.sketchsend;
 
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -24,13 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.parse.FindCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.text.ParseException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE;
@@ -41,14 +41,13 @@ public class ContactList extends ActionBarActivity {
     private static final String YOUR_CONTACTS = "Your Contacts";
     private static final String TAG = "ContactList";
 
-    private ArrayList<String> contactsList;
-    private SharedPreferences savedContacts;
-    private int contactNumber;
+    private ArrayList<String> contacts;
     private ArrayAdapter<String> adapter;
     private ListView contactsListView;
     private int totalContacts;
     private ActionBar myBar;
     private String serializedDrawing;
+    private ParseObject user;
 
 
     @Override
@@ -56,16 +55,16 @@ public class ContactList extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
 
+        user = ParseUser.getCurrentUser();
+
         myBar = getSupportActionBar();
         myBar.setTitle("Your Contacts");
 
-        contactsList = new ArrayList<String>();
+        contacts = new ArrayList<String>();
         contactsListView = (ListView) findViewById(R.id.contactsListView);
-        savedContacts = getSharedPreferences(YOUR_CONTACTS, MODE_PRIVATE);
+
         initializeContacts();
 
-        adapter = new ArrayAdapter<String>(this, R.layout.list_item, contactsList);
-        contactsListView.setAdapter(adapter);
         contactsListView.setChoiceMode(CHOICE_MODE_MULTIPLE);
 
         ImageButton addContactButton = (ImageButton) findViewById(R.id.addContact);
@@ -102,7 +101,7 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
                         public void done(List<ParseUser> parseUsers, com.parse.ParseException e) {
                             if (e == null) {
                                 try {
-                                    if (contactsList.contains(possibleContact)) {
+                                    if (contacts.contains(possibleContact)) {
                                         Toast toast = Toast.makeText(getApplicationContext(), "Contact already exists", Toast.LENGTH_SHORT);
                                         toast.show();
                                     } else {
@@ -172,23 +171,16 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
                             deleteContact(itemClicked);
                         }
                     } // end OnClickListener
-            );builder.show();
-
+            );
+            builder.show();
             return true;
         }
     };
 
 
     public void addContact(String newContact){
-        contactsList.add(newContact);
-        contactNumber = contactsList.size()-1;
+        contacts.add(newContact);
         totalContacts++;
-        SharedPreferences.Editor preferencesEditor = savedContacts.edit();
-        preferencesEditor.putString("contact" + contactNumber, newContact);
-        preferencesEditor.putInt("totCont", totalContacts);
-
-        preferencesEditor.apply();
-
         adapter.notifyDataSetChanged();
 
     }
@@ -200,42 +192,43 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
 
         for (int i=0; i < count; i++){
             if (checked.get(i)){
-                contacts.add(contactsList.get(i));
+                contacts.add(this.contacts.get(i));
             }
         }
         return contacts;
     }
 
     public void deleteContact(String contactToDelete) {
-        //get index to delete from array list
-        contactNumber = contactsList.indexOf(contactToDelete);
-        contactsList.remove(contactToDelete);
-
-        SharedPreferences.Editor prefs = savedContacts.edit();
-
-        //Update + store total number of saved contacts
-        totalContacts--;
-        prefs.putInt("totCont", totalContacts);
-
-        prefs.remove("contact" + contactNumber); // remove contact from save
-
-        for (int i = 0; i < contactsList.size(); i++){
-            prefs.putString("contact" + i, contactsList.get(i));
+        if(totalContacts > 1) {
+            //get index to delete from array list
+            contacts.remove(contactToDelete);
+            //Update + store total number of saved contacts
+            totalContacts--;
+            adapter.notifyDataSetChanged();
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(), "You don't want to delete all your friends!", Toast.LENGTH_SHORT);
+            toast.show();
         }
-
-        prefs.apply(); // saves the changes
-
-        // rebind ArrayList to ListView to show updated list
-        adapter.notifyDataSetChanged();
     }
 
     public void initializeContacts(){
-        String nameTest;
-        totalContacts = savedContacts.getInt("totCont", 0);
-        for( int i = 0; i < totalContacts; i++){
-            nameTest = savedContacts.getString("contact" + i, "Logan Kruse");
-            contactsList.add(nameTest);
-        }
+        String serializedContacts = user.getString("contactList");
+        Gson gson = new Gson();
+        contacts = new ArrayList<String>();
+        Type collectionType = new TypeToken<Collection<String>>(){}.getType();
+        contacts = gson.fromJson(serializedContacts, collectionType);
+        totalContacts = contacts.size();
+        adapter = new ArrayAdapter<String>(this, R.layout.list_item, contacts);
+        contactsListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        Log.w(TAG,"" + serializedContacts);
+    }
+
+    public void serializeContacts() {
+        Gson contactsGson = new Gson();
+        String serializedContacts = contactsGson.toJson(contacts);
+        user.put("contactList", serializedContacts);
+        user.saveInBackground();
     }
 
 
@@ -283,6 +276,16 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        serializeContacts();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        serializeContacts();
     }
 
 

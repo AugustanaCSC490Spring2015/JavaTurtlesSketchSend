@@ -25,15 +25,26 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1" />
 
-    <ImageButton
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="65dp"
-        android:id="@+id/addContact"
-        android:src="@drawable/addbutton"
-        android:scaleType="fitCenter"
-        android:background="@null"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_weight="0"
-        android:layout_marginBottom="4dp" />
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="65dp"
+            android:id="@+id/addContact"
+            android:src="@drawable/addbutton"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_weight="0"
+            android:layout_marginBottom="4dp" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageButton" />
+    </LinearLayout>
 
 </LinearLayout>
