@@ -3,14 +3,13 @@ package edu.augustana.javaturtles.sketchsend;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,7 +37,6 @@ import static android.widget.AbsListView.CHOICE_MODE_MULTIPLE;
 
 public class ContactList extends ActionBarActivity {
 
-    private static final String YOUR_CONTACTS = "Your Contacts";
     private static final String TAG = "ContactList";
 
     private ArrayList<String> contacts;
@@ -48,12 +46,23 @@ public class ContactList extends ActionBarActivity {
     private ActionBar myBar;
     private String serializedDrawing;
     private ParseObject user;
+    private Bundle extras;
+    private boolean fromIntent = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_list);
+
+        extras = getIntent().getExtras();
+        fromIntent = extras.getBoolean("setSendVisible");
+
+        if (fromIntent) {
+            ImageButton sendButton = (ImageButton) findViewById(R.id.sendDrawing);
+            sendButton.setVisibility(View.VISIBLE);
+            sendButton.setOnClickListener(sendDrawing);
+        }
 
         user = ParseUser.getCurrentUser();
 
@@ -74,74 +83,104 @@ public class ContactList extends ActionBarActivity {
 
     }
 
-    //    listener for addContactButton
+    //listener for sendButton
+    //only visible when DrawActivity launches contacts
+    //sends the selected contacts the drawing
+    public View.OnClickListener sendDrawing = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            List<ParseObject> individualDrawings = new ArrayList<ParseObject>();
+            if (extras != null) {
+                serializedDrawing = extras.getString("stringToDraw");
+            } else {
+                serializedDrawing = "";
+            }
+            List<String> contacts = getSelectedContacts();
+            // contacts = getSelectedContacts();
+            for (int i = 0; i < contacts.size(); i++) {
+                ParseObject drawing = new ParseObject("Drawings");
+                drawing.put("fromUser", ParseUser.getCurrentUser().getUsername());
+                drawing.put("toUser", contacts.get(i));
+                drawing.put("drawingString", serializedDrawing);
+                individualDrawings.add(drawing);
+            }
+            ParseObject.saveAllInBackground(individualDrawings);
+            Intent toMainMenu = new Intent(ContactList.this, MainMenu.class);
+            finish();
+            startActivity(toMainMenu);
+        }
+    };
+
+    //listener for addContactButton
     //also handles checking if the contact is a viable account on parse.com
     //does not allow for duplicate contacts
-public View.OnClickListener addContactButtonListener = new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
+    public View.OnClickListener addContactButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(ContactList.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ContactList.this);
 
-        builder.setTitle("Add a new contact:");
+            builder.setTitle("Add a new contact:");
 
-        final EditText input = new EditText(ContactList.this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
+            final EditText input = new EditText(ContactList.this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (input.getText().length() > 0) {
-                    final String possibleContact = input.getText().toString();
-                    final ParseQuery<ParseUser> query = ParseUser.getQuery();
-                    query.whereEqualTo("username", possibleContact);
-                    query.findInBackground(new FindCallback<ParseUser>() {
-                        @Override
-                        public void done(List<ParseUser> parseUsers, com.parse.ParseException e) {
-                            if (e == null) {
-                                try {
-                                    if (contacts.contains(possibleContact)) {
-                                        Toast toast = Toast.makeText(getApplicationContext(), "Contact already exists", Toast.LENGTH_SHORT);
-                                        toast.show();
-                                    } else {
-                                        if (query.count() == 1) {
-                                            addContact(possibleContact);
-                                        } else {
-                                            Toast toast = Toast.makeText(getApplicationContext(), "That is not a valid account", Toast.LENGTH_SHORT);
+            builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (input.getText().length() > 0) {
+                        final String possibleContact = input.getText().toString();
+                        final ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        query.whereEqualTo("username", possibleContact);
+                        query.findInBackground(new FindCallback<ParseUser>() {
+                            @Override
+                            public void done(List<ParseUser> parseUsers, com.parse.ParseException e) {
+                                if (e == null) {
+                                    try {
+                                        if (contacts.contains(possibleContact)) {
+                                            Toast toast = Toast.makeText(getApplicationContext(), "Contact already exists", Toast.LENGTH_SHORT);
                                             toast.show();
+                                        } else {
+                                            if (query.count() == 1) {
+                                                addContact(possibleContact);
+                                            } else {
+                                                Toast toast = Toast.makeText(getApplicationContext(), "That is not a valid account", Toast.LENGTH_SHORT);
+                                                toast.show();
+                                            }
                                         }
+                                    } catch (com.parse.ParseException e1) {
+                                        Toast toast = Toast.makeText(getApplicationContext(), "Oops an error occurred!", Toast.LENGTH_SHORT);
+                                        toast.show();
                                     }
-                                } catch (com.parse.ParseException e1) {
+                                } else {
                                     Toast toast = Toast.makeText(getApplicationContext(), "Oops an error occurred!", Toast.LENGTH_SHORT);
                                     toast.show();
                                 }
-                            } else {
-                                Toast toast = Toast.makeText(getApplicationContext(), "Oops an error occurred!", Toast.LENGTH_SHORT);
-                                toast.show();
                             }
-                        }
 
-                    });
-                    input.setText("");
-            } else {
-                    Toast toast = Toast.makeText(getApplicationContext(), "You didn't enter any characters!", Toast.LENGTH_SHORT);
-                    toast.show();
+                        });
+                        input.setText("");
+                    } else {
+                        Toast toast = Toast.makeText(getApplicationContext(), "You didn't enter any characters!", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
                 }
-           }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-            }
-        });
+                }
+            });
 
-        builder.show();
+            builder.show();
 
-    }
-};
-
+        }
+    };
+    //longClickListener to delete contacts
+    //launches an AlertDialog to ask whether or not the user
+    //wants to delete the contact
     AdapterView.OnItemLongClickListener itemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -152,22 +191,18 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
 
             builder.setMessage("Do you want to delete " + itemClicked + "?");
 
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-                            {
-                                // called when "Cancel" Button is clicked
-                                public void onClick(DialogInterface dialog, int id)
-                                {
-                                    dialog.cancel(); // dismiss dialog
-                                }
-                            }
-                    );
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        // called when "Cancel" Button is clicked
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel(); // dismiss dialog
+                        }
+                    }
+            );
 
             builder.setPositiveButton("Delete",
-                    new DialogInterface.OnClickListener()
-                    {
+                    new DialogInterface.OnClickListener() {
                         // called when "Cancel" Button is clicked
-                        public void onClick(DialogInterface dialog, int id)
-                        {
+                        public void onClick(DialogInterface dialog, int id) {
                             deleteContact(itemClicked);
                         }
                     } // end OnClickListener
@@ -177,29 +212,33 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
         }
     };
 
-
-    public void addContact(String newContact){
+    //adds a contact and updates the totalContacts to represent the
+    //number of contacts in the List.  Updates the ListView
+    public void addContact(String newContact) {
         contacts.add(newContact);
         totalContacts++;
         adapter.notifyDataSetChanged();
 
     }
 
-    public List<String> getSelectedContacts(){
+    //returns an ArrayList from the selected contacts
+    public List<String> getSelectedContacts() {
         int count = contactsListView.getCount();
         List<String> contacts = new ArrayList<String>();
         SparseBooleanArray checked = contactsListView.getCheckedItemPositions();
 
-        for (int i=0; i < count; i++){
-            if (checked.get(i)){
+        for (int i = 0; i < count; i++) {
+            if (checked.get(i)) {
                 contacts.add(this.contacts.get(i));
             }
         }
         return contacts;
     }
 
+    //deletes a selected contact, updates the totalContacts and updates the ListView
+    //you are unable to delete the last contact to avoid a null pointer exception
     public void deleteContact(String contactToDelete) {
-        if(totalContacts > 1) {
+        if (totalContacts > 1) {
             //get index to delete from array list
             contacts.remove(contactToDelete);
             //Update + store total number of saved contacts
@@ -211,19 +250,24 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
         }
     }
 
-    public void initializeContacts(){
+    //Pulls the field from Parse.com that contacts the serialized String that is
+    //the contacts ArrayList.  Deserializes the String into an ArrayList and attaches that
+    //ArrayList to contactsListView and updates contactsListView
+    public void initializeContacts() {
         String serializedContacts = user.getString("contactList");
         Gson gson = new Gson();
         contacts = new ArrayList<String>();
-        Type collectionType = new TypeToken<Collection<String>>(){}.getType();
+        Type collectionType = new TypeToken<Collection<String>>() {
+        }.getType();
         contacts = gson.fromJson(serializedContacts, collectionType);
         totalContacts = contacts.size();
         adapter = new ArrayAdapter<String>(this, R.layout.list_item, contacts);
         contactsListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        Log.w(TAG,"" + serializedContacts);
     }
 
+    //Takes the ArrayList contactList, serializes it to a String, and updates
+    //the field on Parse.com
     public void serializeContacts() {
         Gson contactsGson = new Gson();
         String serializedContacts = contactsGson.toJson(contacts);
@@ -239,55 +283,19 @@ public View.OnClickListener addContactButtonListener = new View.OnClickListener(
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        if (id== R.id.selected_contacts){
-            List<ParseObject> individualDrawings = new ArrayList<ParseObject>();
-            Bundle extras = getIntent().getExtras();
-            if(extras != null) {
-                serializedDrawing = extras.getString("stringToDraw");
-                Log.w(TAG, "Has Drawing");
-            } else {
-                serializedDrawing = "";
-                Log.w(TAG, "Null for Drawing");
-            }
-            List<String> contacts= getSelectedContacts();
-            // contacts = getSelectedContacts();
-            for (int i = 0; i < contacts.size() ; i++){
-                ParseObject drawing = new ParseObject("Drawings");
-                Log.w(TAG, "for loop tick " + i);
-                drawing.put("fromUser", ParseUser.getCurrentUser().getUsername());
-                drawing.put("toUser", contacts.get(i));
-                drawing.put("drawingString", serializedDrawing);
-                individualDrawings.add(drawing);
-            }
-            ParseObject.saveAllInBackground(individualDrawings);
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+    //Uses to save the new contactsList into Parse.com upon leaving
+    //the Activity
     @Override
     protected void onPause() {
         super.onPause();
         serializeContacts();
     }
+
+    //Uses to save the new contactsList into Parse.com upon leaving
+    //the Activity
     @Override
     protected void onDestroy() {
         super.onDestroy();
         serializeContacts();
     }
-
-
-
 }

@@ -124,6 +124,7 @@ public class DrawActivity extends ActionBarActivity {
             System.out.println(serializedDrawing);
             Intent selectContacts = new Intent(DrawActivity.this, ContactList.class);
             selectContacts.putExtra("stringToDraw", serializedDrawing);
+            selectContacts.putExtra("setSendVisible", true);
             startActivity(selectContacts);
         }
     };
