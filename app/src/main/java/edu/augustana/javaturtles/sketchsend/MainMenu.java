@@ -183,6 +183,7 @@ public class MainMenu extends ActionBarActivity {
         @Override
         public void onClick(View v) {
             Intent playGameIntent=new Intent(MainMenu.this, ContactList.class);
+            playGameIntent.putExtra("setSendVisible", false);
             startActivity(playGameIntent);
         }
     };

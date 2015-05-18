@@ -38,19 +38,19 @@
             android:scaleType="fitCenter"
             android:background="@null"
             android:layout_gravity="center_horizontal|bottom"
-            android:layout_weight="0"
+            android:layout_weight="1"
             android:layout_marginBottom="4dp" />
 
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="65dp"
-            android:id="@+id/sendSketch"
+            android:id="@+id/sendDrawing"
             android:src="@drawable/sendbutton"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="4dp"
-            android:layout_weight="0"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
             android:background="@null"
-            android:scaleType="fitCenter" />
+            android:visibility="invisible" />
     </LinearLayout>
 
 </LinearLayout>
