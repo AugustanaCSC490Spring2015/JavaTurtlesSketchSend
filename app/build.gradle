@@ -1,16 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'MyAndroidKey'
-            keyPassword 'btw1470god'
-            storeFile file('C:/Users/Trevor Warner/keystores/android.jks')
-            storePassword 'btw1470god'
-        }
-    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
+
     defaultConfig {
         applicationId "edu.augustana.javaturtles.sketchsend"
         minSdkVersion 19
@@ -22,9 +15,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
-        }
-        debug {
         }
     }
 }
