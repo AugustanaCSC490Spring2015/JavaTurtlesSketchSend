@@ -39,14 +39,6 @@ public class InboxList extends ActionBarActivity {
         
         queryParse();
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_inbox_list, menu);
-        return true;
-    }
 /*
    Queries Parse.com to find any entries that contain a toUser field
    equal to the currentUser.  When hte query is finished it calls createInbox

@@ -38,7 +38,8 @@
         </activity>
         <activity
             android:name=".ReceivedDrawing"
-            android:label="@string/title_activity_received_drawing" >
+            android:label="@string/title_activity_received_drawing"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

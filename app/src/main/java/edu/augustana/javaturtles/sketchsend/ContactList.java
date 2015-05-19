@@ -277,14 +277,6 @@ public class ContactList extends ActionBarActivity {
         user.saveInBackground();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_contact_list, menu);
-        return true;
-    }
-
     //Uses to save the new contactsList into Parse.com upon leaving
     //the Activity
     @Override
