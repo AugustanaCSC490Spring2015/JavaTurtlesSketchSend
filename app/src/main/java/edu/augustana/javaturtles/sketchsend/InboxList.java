@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -72,7 +73,7 @@ public class InboxList extends ActionBarActivity {
         List<String> timeStamps = new ArrayList<String>();
         final List<String> combinedToDisplay = new ArrayList<String>();
         final List<String> serializedDrawing = new ArrayList<String>();
-        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd HH:mm");
+        final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd hh:mm a");
         for (ParseObject drawing:queryResults) {
             fromUsers.add(drawing.getString("fromUser"));
             Date dateToFormat = drawing.getCreatedAt();
@@ -81,7 +82,7 @@ public class InboxList extends ActionBarActivity {
             serializedDrawing.add(drawing.getString("drawingString"));
         }
         for (int i = 0; i < fromUsers.size(); i++) {
-            combinedToDisplay.add("From: " + fromUsers.get(i) + "   Received: " + timeStamps.get(i));
+            combinedToDisplay.add("From: " + fromUsers.get(i) + "\nReceived: " + timeStamps.get(i));
         }
         ListView inboxList = (ListView) findViewById(R.id.inboxList);
         ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.inbox_item, combinedToDisplay);
@@ -134,5 +135,37 @@ public class InboxList extends ActionBarActivity {
             }
         });
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_inbox_list,menu);
+        return true;
+    }
+/*
+    Deletes all drawings in Inbox
+    Code is redundant but maintains the recursive nature for updating
+    the ListView
+ */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.delete_all_drawings) {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Drawings");
+            query.whereEqualTo("toUser", ParseUser.getCurrentUser().getUsername());
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> parseObjects, com.parse.ParseException e) {
+                    if (e == null) {
+                        for (ParseObject drawing:parseObjects) {
+                            drawing.deleteInBackground();
+                        }
+                        queryParse();
+                    } else {
+                    }
+                }
+            });
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
