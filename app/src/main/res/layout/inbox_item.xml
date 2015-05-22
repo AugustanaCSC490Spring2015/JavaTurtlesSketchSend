@@ -1,12 +1,14 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/inbox_list"
-    android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:textAppearance="?android:attr/textAppearanceMedium"
     android:gravity="center_vertical|left"
     android:textSize="20dp"
     android:includeFontPadding="false"
     android:textAllCaps="false"
-    android:drawablePadding="20dp">
+    android:paddingRight="@dimen/inboxPadding"
+    android:paddingBottom="@dimen/inboxPadding"
+    android:paddingTop="@dimen/inboxPadding">
 
 </TextView>

@@ -16,6 +16,7 @@
     <string name="width_selector">Set A Width</string>
     <string name="selected_contacts">Selected Contacts</string>
     <string name="delete_all_drawings">Delete all drawings</string>
+    <string name="refresh">Refresh</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

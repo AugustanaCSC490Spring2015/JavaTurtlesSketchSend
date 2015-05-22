@@ -3,6 +3,7 @@ package edu.augustana.javaturtles.sketchsend;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +32,15 @@ public class InboxList extends ActionBarActivity {
 
     private static final String TAG = "Inbox";
     private ActionBar myBar;
+    private Boolean status;
+    private int newIndex = -1;
+    private List<ParseObject> copyOfQueryResults;
+    private List<String> combinedToDisplay;
+    private List<String> serializedDrawing;
+    private ArrayAdapter adapter;
+    private ListView inboxList;
+    private ParseQuery<ParseObject> query;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +58,7 @@ public class InboxList extends ActionBarActivity {
    passing in the query results in the form of List<ParseObjects>
  */
     public void queryParse() {
-        final ParseQuery<ParseObject> query = ParseQuery.getQuery("Drawings");
+        query = ParseQuery.getQuery("Drawings");
         query.whereEqualTo("toUser", ParseUser.getCurrentUser().getUsername());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -67,74 +79,106 @@ public class InboxList extends ActionBarActivity {
 
  */
     public void createInbox(List<ParseObject> queryResults) {
-        final List<ParseObject> copyOfQueryResults = queryResults;
-
+        copyOfQueryResults = queryResults;
         List<String> fromUsers = new ArrayList<String>();
         List<String> timeStamps = new ArrayList<String>();
-        final List<String> combinedToDisplay = new ArrayList<String>();
-        final List<String> serializedDrawing = new ArrayList<String>();
+        combinedToDisplay = new ArrayList<>();
+        serializedDrawing = new ArrayList<>();
         final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd hh:mm a");
-        for (ParseObject drawing:queryResults) {
+
+        Collections.sort(copyOfQueryResults, new CustomComparator());
+
+        for (ParseObject drawing: queryResults) {
             fromUsers.add(drawing.getString("fromUser"));
             Date dateToFormat = drawing.getCreatedAt();
             String formattedDate = DATE_FORMAT.format(dateToFormat);
             timeStamps.add(formattedDate);
             serializedDrawing.add(drawing.getString("drawingString"));
         }
+
         for (int i = 0; i < fromUsers.size(); i++) {
             combinedToDisplay.add("From: " + fromUsers.get(i) + "\nReceived: " + timeStamps.get(i));
         }
-        ListView inboxList = (ListView) findViewById(R.id.inboxList);
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, R.layout.inbox_item, combinedToDisplay);
-        inboxList.setAdapter(adapter);
+        inboxList = (ListView) findViewById(R.id.inboxList);
+        adapter = new ArrayAdapter<>(this, R.layout.inbox_item, combinedToDisplay);
+        //TREVOR trying to set boolean value + set drawable right
+        /*
+        for (ParseObject drawing: queryResults){
+            newIndex++;
+            status = drawing.getBoolean("newDrawing");
+            if (status == null){
 
-        //OnItemClickListener launches intent to draw the received image in ReceivedDrawing
-        inboxList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent redraw = new Intent(InboxList.this, ReceivedDrawing.class);
-                redraw.putExtra("stringToRedraw", serializedDrawing.get(position));
-                startActivity(redraw);
             }
-        });
+            setDrawables(drawing, newIndex);
+            */
+        inboxList.setAdapter(adapter);
+        //OnItemClickListener launches intent to draw the received image in ReceivedDrawing
+        inboxList.setOnItemClickListener(inboxClickListener);
         //OnItemLingClickListener prompts user to delete drawing.  They can either delete
         //the drawing which will delete it on Parse.com and requery Parse.com to update
         //the ListView
-        inboxList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final int copyOfPosition = position;
-                AlertDialog.Builder builder = new AlertDialog.Builder(InboxList.this);
+        inboxList.setOnItemLongClickListener(longInboxClickListener);
+    }
 
-                builder.setMessage("Do you want to delete this drawing?");
 
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            // called when "Cancel" Button is clicked
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel(); // dismiss dialog
-                            }
+    /*
+    public Drawable setDrawables(ParseObject drawing, int position) {
+        Drawable img = getResources().getDrawable(R.drawable.newdrawing);
+        if (drawing.getBoolean("newDrawing")) {
+            inboxList.getItemAtPosition(position)
+        }else {
+           int img = R.drawable.
+        }
+    }
+    */
+
+    AdapterView.OnItemClickListener inboxClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Intent redraw = new Intent(InboxList.this, ReceivedDrawing.class);
+            redraw.putExtra("stringToRedraw", serializedDrawing.get(position));
+            startActivity(redraw);
+        }
+    };
+
+    AdapterView.OnItemLongClickListener longInboxClickListener = new AdapterView.OnItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            final int copyOfPosition = position;
+            AlertDialog.Builder builder = new AlertDialog.Builder(InboxList.this);
+
+            builder.setMessage("Do you want to delete this drawing?");
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        // called when "Cancel" Button is clicked
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel(); // dismiss dialog
                         }
-                );
+                    }
+            );
 
-                builder.setPositiveButton("Delete",
-                        new DialogInterface.OnClickListener()
+            builder.setPositiveButton("Delete",
+                    new DialogInterface.OnClickListener()
+                    {
+                        // called when "Delete" Button is clicked
+                        public void onClick(DialogInterface dialog, int id)
                         {
-                            // called when "Delete" Button is clicked
-                            public void onClick(DialogInterface dialog, int id)
-                            {
-                                ParseObject parseObjectToDelete = copyOfQueryResults.get(copyOfPosition);
-                                parseObjectToDelete.deleteInBackground();
-                                serializedDrawing.remove(copyOfPosition);
-                                combinedToDisplay.remove(copyOfPosition);
-                                queryParse();
-                            }
-                        } // end OnClickListener
-                );builder.show();
+                            toDelete(copyOfQueryResults, copyOfPosition);
+                        }
+                    } // end OnClickListener
+            );builder.show();
 
-                return true;
-            }
-        });
+            return true;
+        }
+    };
+
+    public void toDelete(List<ParseObject> parseList, int position) {
+        ParseObject parseObjectToDelete = parseList.get(position);
+        parseObjectToDelete.deleteInBackground();
+        serializedDrawing.remove(position);
+        combinedToDisplay.remove(position);
         adapter.notifyDataSetChanged();
+        //queryParse();
     }
 
     @Override
@@ -150,6 +194,9 @@ public class InboxList extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if(id == R.id.refresh){
+            queryParse();
+        }
         if(id == R.id.delete_all_drawings) {
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Drawings");
             query.whereEqualTo("toUser", ParseUser.getCurrentUser().getUsername());
@@ -160,12 +207,22 @@ public class InboxList extends ActionBarActivity {
                         for (ParseObject drawing:parseObjects) {
                             drawing.deleteInBackground();
                         }
-                        queryParse();
+                        combinedToDisplay.clear();
+                        serializedDrawing.clear();
+                        adapter.notifyDataSetChanged();
                     } else {
                     }
                 }
             });
         }
         return super.onOptionsItemSelected(item);
+    }
+}
+
+class CustomComparator implements Comparator<ParseObject> {
+
+    @Override
+    public int compare(ParseObject lhs, ParseObject rhs) {
+        return rhs.getCreatedAt().compareTo(lhs.getCreatedAt());
     }
 }

@@ -3,5 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="edu.augustana.javaturtles.sketchsend.InboxList">
     <item android:id="@+id/delete_all_drawings" android:title="@string/delete_all_drawings"
+        android:orderInCategory="101" app:showAsAction="never" />
+    <item android:id="@+id/refresh" android:title="@string/refresh"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>
